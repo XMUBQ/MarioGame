@@ -1,0 +1,36 @@
+Review author: Joel Wong
+Date: 9/16/2018
+Sprint 2
+
+File: KeyboardController.cs
+Authored by: Keegan Strohm
+Time taken for review: 1 minute
+
+public KeyboardController(SuperMarioBros superMarioBros, Mario.Mario mario)
+        {
+            this.superMarioBros = superMarioBros;
+            this.mario = mario;
+            idle = new MarioIdleCommand(mario);
+            keyCommandMap = new Dictionary<Keys, ICommand>
+            {
+                { Keys.Q, new QuitCommand(superMarioBros) }, // Mario quit command.
+                { Keys.W, new MarioUpCommand(mario) }, // Mario up commands.
+                { Keys.Up, new MarioUpCommand(mario) },
+                { Keys.S, new MarioDownCommand(mario) }, // Mario down commands.
+                { Keys.Down, new MarioDownCommand(mario) },
+                { Keys.A, new MarioLeftCommand(mario) }, // Mario left commands.
+                { Keys.Left, new MarioLeftCommand(mario) },
+                { Keys.D, new MarioRightCommand(mario) }, // Mario right commands.
+                { Keys.Right, new MarioRightCommand(mario) },
+                { Keys.Y, new MarioSmallCommand(mario) }, // Mario small command.
+                { Keys.U, new MarioBigCommand(mario) }, // Mario big command.
+                { Keys.I, new MarioFireCommand(mario) }, // Mario fire command.
+                { Keys.O, new MarioDeadCommand(mario) } // Mario dead command.
+            };
+
+        }
+
+Comments:
+The comments here are not really needed to figure out what the piece of code is doing, so it's pretty much just
+repeating what the code does instead of stating the intention of the code being written that way. As the grader
+pointed out before, adding redundant comments to self-explanatory code will only make the code messier.

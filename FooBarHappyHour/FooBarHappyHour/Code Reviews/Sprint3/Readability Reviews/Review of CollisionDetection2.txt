@@ -1,0 +1,47 @@
+﻿Review author: Bohan Zhang
+Date: 10/3/2018
+Sprint 3
+
+File: CollisionDetectino.cs
+Authored by: Abdullah, Joel
+Time taken for review: 15 minutes
+
+
+		private void CheckMarioEnemyCollision()
+        {
+            Rectangle marioHitbox = level.Mario.GetRectangle();
+            foreach (IEnemy enemy in level.Enemies)
+            {
+                Rectangle enemyHitbox = enemy.GetRectangle();
+                Rectangle intersection = Rectangle.Intersect(marioHitbox, enemyHitbox);
+
+                if (!intersection.IsEmpty)
+                {
+                    CollisionSide side = GetCollisionSide(intersection, marioHitbox, enemyHitbox);
+                    MarioEnemyCollisionHandler.HandleCollision(level.Mario, enemy, side);
+                }
+            }
+        }
+
+        private void CheckMarioItemCollision()
+        {
+            Rectangle marioHitbox = level.Mario.GetRectangle();
+            foreach (IItem item in level.Items)
+            {
+                Rectangle itemHitbox = item.GetRectangle();
+                Rectangle intersection = Rectangle.Intersect(marioHitbox, itemHitbox);
+
+                if (!intersection.IsEmpty) MarioItemCollisionHandler.HandleCollision(level.Mario, item);
+            }
+		}
+Comments: Though up to now it works good and it looks hard to refractor them together due to the inconsistent 
+of method parameters, still lots of repeated codes here. Maybe we can integrate them in the same method or ask
+the grader if it's necessary to integrate them together to reduce the length and benefit debug in future.
+
+ private void CheckMarioBlockCollision(int blockIndexX, int BlockIndexY)
+        {
+            if (blockIndexX >= 0 && blockIndexX < level.Width && BlockIndexY >= 0 && BlockIndexY < level.Height)
+            {
+
+Comments: Actually suggested by the professor, we can put the condition into one method to 
+increase readability.

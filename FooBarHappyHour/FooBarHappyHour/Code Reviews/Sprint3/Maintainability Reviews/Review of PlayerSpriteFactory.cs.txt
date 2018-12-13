@@ -1,0 +1,19 @@
+﻿Review author: Keegan Strohm
+Date: 10/8/2018
+Sprint 3
+
+File: PlayerSpriteFactory.cs
+Authored by: Keegan, Joel
+Time taken for review: 25 minutes
+
+*Class is almost 300 lines so just look at it instead.*
+
+Comments: 
+I think that this class has been hard to maintain mostly because of the amount of variables
+and methods required for the factory. When a new spritesheet gets added there are three
+steps to getting the factory to work with it and with the amount of states the sprites can be in
+results in a state explosion of variables and methods. I think our factories in general will need
+a rewrite at some point because it takes a while to get new states setup. Maybe a data driven
+approach where we only have to write out what a sprite is at one point instead of three
+might help us maintain it over the rest of the semester. That sort of refactor would not only help
+the PlayerSpriteFactory class, but all of our factories.

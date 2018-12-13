@@ -1,0 +1,105 @@
+﻿Review author: Abdullah Alhag
+Date: 10/8/2018
+Sprint 3
+
+File: WorldFactory.cs
+Authored by: Keegan, Joel
+Time taken for review: 10 minutes
+
+
+
+
+
+        private void CreateBlock(IWorld world, string type, float xPosition, float yPosition)
+        {
+            switch (type)
+            {
+                case "BeveledBlock":
+                    world.Blocks[(int)xPosition / blockSidePixels, (int)yPosition / blockSidePixels] = new BeveledBlock(new Vector2(xPosition, yPosition));
+                    break;
+                case "BrickBlock":
+                    world.Blocks[(int)xPosition / blockSidePixels, (int)yPosition / blockSidePixels] = new BrickBlock(new Vector2(xPosition, yPosition));
+                    break;
+                case "GroundBlock":
+                    world.Blocks[(int)xPosition / blockSidePixels, (int)yPosition / blockSidePixels] = new GroundBlock(new Vector2(xPosition, yPosition));
+                    break;
+                case "HiddenBlock":
+                    world.Blocks[(int)xPosition / blockSidePixels, (int)yPosition / blockSidePixels] = new HiddenBlock(new Vector2(xPosition, yPosition));
+                    break;
+                case "Pipe":
+                    world.Blocks[(int)xPosition / blockSidePixels, (int)yPosition / blockSidePixels] = new Pipe(new Vector2(xPosition, yPosition));
+                    break;
+                case "QuestionBlock":
+                    world.Blocks[(int)xPosition / blockSidePixels, (int)yPosition / blockSidePixels] = new QuestionBlock(new Vector2(xPosition, yPosition));
+                    break;
+                case "UsedBlock":
+                    world.Blocks[(int)xPosition / blockSidePixels, (int)yPosition / blockSidePixels] = new UsedBlock(new Vector2(xPosition, yPosition));
+                    break;
+                default:
+                    break;
+            }
+        }
+
+
+        private void CreateItem(IWorld world, string type, float xPosition, float yPosition)
+        {
+            switch (type)
+            {
+                case "Coin":
+                    world.Items.Add(new Coin(new Vector2(xPosition, yPosition)));
+                    break;
+                case "FireFlower":
+                    world.Items.Add(new FireFlower(new Vector2(xPosition, yPosition)));
+                    break;
+                case "GreenMushroom":
+                    world.Items.Add(new GreenMushroom(new Vector2(xPosition, yPosition)));
+                    break;
+                case "RedMushroom":
+                    world.Items.Add(new RedMushroom(new Vector2(xPosition, yPosition)));
+                    break;
+                case "Star":
+                    world.Items.Add(new Star(new Vector2(xPosition, yPosition)));
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void CreateScenery(IWorld world, string type, float xPosition, float yPosition)
+        {
+            switch (type)
+            {
+                case "BigBush":
+                    world.Scenery.Add(new BigBush(new Vector2(xPosition, yPosition)));
+                    break;
+                case "SmallBush":
+                    world.Scenery.Add(new SmallBush(new Vector2(xPosition, yPosition)));
+                    break;
+                case "BigCloud":
+                    world.Scenery.Add(new BigCloud(new Vector2(xPosition, yPosition)));
+                    break;
+                case "SmallCloud":
+                    world.Scenery.Add(new SmallCloud(new Vector2(xPosition, yPosition)));
+                    break;
+                case "BigHill":
+                    world.Scenery.Add(new BigHill(new Vector2(xPosition, yPosition)));
+                    break;
+                case "SmallHill":
+                    world.Scenery.Add(new SmallHill(new Vector2(xPosition, yPosition)));
+                    break;
+                default:
+                    break;
+            }
+        }
+
+
+Comments:
+I am worried about the maintainability of these three functions. As we load different worlds, it might be the case that a new block/item type
+is introduced and we might need to add more switch statements.
+If it would be possible, it might best to create an initiation method for blocks/item/scenery that takes a string and initiate an object based on
+the string passed to it.
+These methods are part of the block/item/scenery classes and can for example be called as follow:
+world.Items.Add(Item(String itemType, (new Vector2(xPosition, yPosition))));
+This will remove the need of the switch statements and makes it easy to maintain the code.
+
+

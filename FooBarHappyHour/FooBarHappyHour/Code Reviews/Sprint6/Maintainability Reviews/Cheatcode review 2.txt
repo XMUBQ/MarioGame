@@ -1,0 +1,21 @@
+﻿Review author: Bohan Zhang
+Date: 12/2/2018
+Sprint 6
+
+File: CheatCodeManager.cs
+Authored by: Abdullah
+Time taken for review: 10 minutes
+        private string InputQueueToString()
+        {
+            string code = "";
+            foreach (string str in inputQueue)
+            {
+                code = code + str;
+            }
+            return code;
+        }
+
+Comments: Actually we fixed lots of cheat code issue in this implementation. But this could be a 
+performance issue if there's a great number of string concatenation. Our queue is not that long, 
+however, we do it in every update so maybe it's little time-consuming.
+

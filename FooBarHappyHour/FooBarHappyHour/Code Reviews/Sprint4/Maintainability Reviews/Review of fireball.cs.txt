@@ -1,0 +1,87 @@
+﻿Review author: Keegan Strohm
+Date: 10/29/2018
+Sprint 4
+
+File: Fireball.cs
+Authored by: Keegan, Joel
+Time taken for review: 15 minutes
+
+namespace FooBarHappyHour.Misc
+{
+    public class Fireball : IGameObject
+    {
+        public bool RemovalFlag { get; set; }
+        public bool IsFacingRight { get; set; }
+        public bool Collidable { get => !exploded; set => Collidable = value; }
+
+        public IPhysics Physics { get => FireballPhysics; }
+        public FireballPhysics FireballPhysics { get; private set; }
+        public Rectangle Rectangle => new Rectangle((int)Physics.Location.X, (int)Physics.Location.Y, sprite.Width, sprite.Height);
+
+        private const float explosionTime = 0.15f;
+        private float explosionTimer;
+        private ISprite sprite;
+        private bool exploded;
+
+        public Fireball(Vector2 location, bool isFacingRight)
+        {
+            FireballPhysics = new FireballPhysics(false, true, location);
+            IsFacingRight = isFacingRight;
+            if (isFacingRight)
+            {
+                sprite = MiscSpriteFactory.Instance.CreateFireballRightSprite();
+            }
+            else
+            {
+                sprite = MiscSpriteFactory.Instance.CreateFireballLeftSprite();
+            }
+            explosionTimer = explosionTime;
+        }
+
+        public void Jump()
+        {
+            FireballPhysics.Jump();
+        }
+
+        public void Explode()
+        {
+            exploded = true;
+            FireballPhysics.ResetMotion();
+            FireballPhysics.Locked = true;
+            sprite = MiscSpriteFactory.Instance.CreateFireballExplosionSprite();
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            if (!exploded)
+            {
+                if (IsFacingRight)
+                {
+                    FireballPhysics.MoveRight();
+                }
+                else
+                {
+                    FireballPhysics.MoveLeft();
+                }
+            }
+            else
+            {
+                explosionTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+                if (explosionTimer <= 0) RemovalFlag = true;
+            }
+            FireballPhysics.Update(gameTime);
+            sprite.Update(gameTime);
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            sprite.Draw(spriteBatch, Physics.Location);
+        }
+    }
+}
+
+I think that this class is basic enough that containing everything it needs inside of one class is more than enough
+abstraction because its state is so simple. If the fireball was a more complex object breaking it up in to a
+state design pattern might be beneficial, but as it stands I think that sort of design pattern would be overkill.
+The two states that the fireball can be in are kind of intertwined which could make expansion difficult, but
+if I were to make the fireball more complex, the class would probably be rewritten anyway.

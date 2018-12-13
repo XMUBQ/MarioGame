@@ -1,0 +1,324 @@
+﻿Review author: Joel Wong
+Date: 10/28/2018
+Sprint 4
+
+File: CollisionDetection.cs
+Authored by: Abdullah, Keegan, Bohan, Joel
+Time taken for review: 10 minutes
+
+public class CollisionDetection
+    {
+        public IWorld Level { get; set; }
+
+        public enum CollisionSide { Left, Right, Top, Bottom };
+        public bool MarioCollisions { get; set; }
+
+        public CollisionDetection(IWorld world)
+        {
+            Level = world;
+            MarioCollisions = true;
+        }
+
+        public void CheckAllCollisions()
+        {
+            if (MarioCollisions)
+            {
+                FindBlocksCollidedWithMario();
+                CheckMarioItemCollision();  // Check items first so that powerup effects take place before detecting collision with enemies
+                CheckMarioEnemyCollision(); // Check enemies next so that we don't have to check blocks if mario is dead
+            }
+            FindBlocksCollidedWithEnemy();
+            FindBlockCollidedWithItem();
+            FindBlockCollidedWithFireball();
+            CheckEnemyEnemyCollision();
+            CheckFireballEnemyCollision();
+        }
+
+        private void CheckMarioEnemyCollision()
+        {
+            Rectangle marioHitbox = Level.Mario.Rectangle;
+            foreach (IEnemy enemy in Level.Enemies)
+            {
+                Rectangle enemyHitbox = enemy.Rectangle;
+                Rectangle intersection = Rectangle.Intersect(marioHitbox, enemyHitbox);
+
+                if (!intersection.IsEmpty)
+                {
+                    CollisionSide side = GetCollisionSide(intersection, marioHitbox, enemyHitbox);
+                    EnemyCollisionHandler.HandleCollision(enemy, Level.Mario, side);
+                }
+            }
+        }
+
+        private void CheckMarioItemCollision()  // Slight repeating of code because handling collision between game objects are sufficiently different, avoid tight coupling
+        {
+            Rectangle marioHitbox = Level.Mario.Rectangle;
+            foreach (IItem item in Level.Items)
+            {
+                Rectangle itemHitbox = item.Rectangle;
+                Rectangle intersection = Rectangle.Intersect(marioHitbox, itemHitbox);
+
+                if (!intersection.IsEmpty) MarioItemCollisionHandler.HandleCollision(Level.Mario, item);
+            }
+        }
+
+        private void FindBlockCollidedWithItem()
+        {
+            foreach (IItem item in Level.Items)
+            {
+                IBlock block = new HiddenBlock(new Vector2(0, 0));  // Get size of an arbitrary block to be size of local collision detection scope
+                float itemLocationX = item.Physics.Location.X;
+                float itemLocationY = item.Physics.Location.Y;
+                int blocksWidth = block.Rectangle.Width;
+                int blocksHeight = block.Rectangle.Height;
+                int blockIndexX = (int)Math.Floor(itemLocationX / blocksWidth);
+                int blockIndexY = (int)Math.Floor(itemLocationY / blocksHeight);
+                for (int blockIndexOffsetX = -2; blockIndexOffsetX <= 2; blockIndexOffsetX++)
+                {
+                    for (int blockIndexOffsetY = -2; blockIndexOffsetY <= 2; blockIndexOffsetY++)
+                    {
+                        CheckItemBlockCollision(item, blockIndexX + blockIndexOffsetX, blockIndexY + blockIndexOffsetY);
+                    }
+                }
+            }
+        }
+
+        private void CheckItemBlockCollision(IItem item, int blockIndexX, int blockIndexY)
+        {
+            bool ItemIsInHorizontalScope = blockIndexX >= 0 && blockIndexX < Level.Width;
+            bool ItemIsInVerticalScope = blockIndexY >= 0 && blockIndexY < Level.Height;
+            if (ItemIsInHorizontalScope && ItemIsInVerticalScope)
+            {
+                IBlock block = Level.GetBlocks()[blockIndexX][blockIndexY];
+                Rectangle itemHitbox = item.Rectangle;
+                if (block != null)
+                {
+                    Rectangle blockHitbox = block.Rectangle;
+                    Rectangle intersection = Rectangle.Intersect(itemHitbox, blockHitbox);
+                    if (!intersection.IsEmpty)
+                    {
+                        CollisionSide side = GetCollisionSide(intersection, itemHitbox, blockHitbox);
+                        ItemBlockCollisionHandler.HandleCollision(block, item,side);
+                    }
+                }
+            }
+        }
+
+        private void FindBlocksCollidedWithMario()
+        {
+            IBlock block = new HiddenBlock(new Vector2(0, 0));  // Get size of an arbitrary block to be size of local collision detection scope
+            float marioLocationX = Level.Mario.MovementState.Location.X;
+            float marioLocationY = Level.Mario.MovementState.Location.Y;
+            int blocksWidth = block.Rectangle.Width;
+            int blocksHeight = block.Rectangle.Height;
+            int blockIndexX = (int)Math.Floor(marioLocationX / blocksWidth);
+            int blockIndexY = (int)Math.Floor(marioLocationY / blocksHeight);
+            for (int blockIndexOffsetX = -2; blockIndexOffsetX <= 2; blockIndexOffsetX++)
+            {
+                for (int blockIndexOffsetY = -2; blockIndexOffsetY <= 2; blockIndexOffsetY++)
+                {
+                    CheckMarioBlockCollision(blockIndexX + blockIndexOffsetX, blockIndexY + blockIndexOffsetY);
+                }
+            }
+        }
+
+        private void CheckMarioBlockCollision(int blockIndexX, int blockIndexY)
+        {
+            bool marioIsInHorizontalScope = blockIndexX >= 0 && blockIndexX < Level.Width;
+            bool marioIsInVerticalScope = blockIndexY >= 0 && blockIndexY < Level.Height;
+            if (marioIsInHorizontalScope && marioIsInVerticalScope)
+            {
+                IBlock block = Level.GetBlocks()[blockIndexX][blockIndexY];
+                Rectangle marioHitbox = Level.Mario.Rectangle;
+                if (block != null)
+                {
+                    Rectangle blockHitbox = block.Rectangle;
+                    Rectangle intersection = Rectangle.Intersect(marioHitbox, blockHitbox);
+
+                    if (!intersection.IsEmpty)
+                    {/*
+                        foreach (IItem item in block.ItemsBehind)
+                        {
+                            item.CanHandleCollision = true;
+                            CheckMarioItemCollision();
+                        }*/
+                        CollisionSide side = GetCollisionSide(intersection, marioHitbox, blockHitbox);
+                        MarioBlockCollisionHandler.HandleCollision(Level.Mario, block, side);
+                    }
+                }
+            }
+        }
+
+        private void CheckEnemyEnemyCollision()
+        {
+            foreach (IEnemy colliderEnemy in Level.Enemies)
+            {
+                Rectangle colliderEnemyHitbox = colliderEnemy.Rectangle;
+                foreach (IEnemy collidedEnemy in Level.Enemies)
+                {
+                    if (collidedEnemy != colliderEnemy)
+                    {
+                        Rectangle enemyHitbox = collidedEnemy.Rectangle;
+                        Rectangle intersection = Rectangle.Intersect(colliderEnemyHitbox, enemyHitbox);
+
+                        if (!intersection.IsEmpty)
+                        {
+                            CollisionSide side = GetCollisionSide(intersection, colliderEnemyHitbox, enemyHitbox);
+                            EnemyCollisionHandler.HandleCollision(colliderEnemy, collidedEnemy, side);
+                        }
+                    }
+                    
+                }
+            }
+        }
+
+        private void FindBlocksCollidedWithEnemy()
+        {
+            foreach (IEnemy enemy in Level.Enemies)
+            {
+                IBlock block = new HiddenBlock(new Vector2(0, 0));  // Get size of an arbitrary block to be size of local collision detection scope
+                float enemyLocationX = enemy.Physics.Location.X;
+                float enemyLocationY = enemy.Physics.Location.Y;
+                int blocksWidth = block.Rectangle.Width;
+                int blocksHeight = block.Rectangle.Height;
+                int blockIndexX = (int)Math.Floor(enemyLocationX / blocksWidth);
+                int blockIndexY = (int)Math.Floor(enemyLocationY / blocksHeight);
+                for (int blockIndexOffsetX = -2; blockIndexOffsetX <= 2; blockIndexOffsetX++)
+                {
+                    for (int blockIndexOffsetY = -2; blockIndexOffsetY <= 2; blockIndexOffsetY++)
+                    {
+                        CheckEnemyBlockCollision(enemy, blockIndexX + blockIndexOffsetX, blockIndexY + blockIndexOffsetY);
+                    }
+                }
+            }
+           
+        }
+
+        private void CheckEnemyBlockCollision(IEnemy enemy, int blockIndexX, int blockIndexY)
+        {
+            bool enemyIsInHorizontalScope = blockIndexX >= 0 && blockIndexX < Level.Width;
+            bool enemyIsInVerticalScope = blockIndexY >= 0 && blockIndexY < Level.Height;
+            if (enemyIsInHorizontalScope && enemyIsInVerticalScope)
+            {
+                IBlock block = Level.GetBlocks()[blockIndexX][blockIndexY];
+                Rectangle enemyHitbox = enemy.Rectangle;
+
+                if (block != null)
+                {
+                    Rectangle blockHitbox = block.Rectangle;
+                    Rectangle intersection = Rectangle.Intersect(enemyHitbox, blockHitbox);
+                    if (!intersection.IsEmpty)
+                    {
+                        CollisionSide side = GetCollisionSide(intersection, enemyHitbox, blockHitbox);
+                        EnemyCollisionHandler.HandleCollision(enemy, block, side);
+                    }
+                } 
+            }
+        }
+
+        private void FindBlockCollidedWithFireball()
+        {
+            foreach (Fireball fireball in Level.Fireballs)
+            {
+                IBlock block = new HiddenBlock(new Vector2(0, 0));  // Get size of an arbitrary block to be size of local collision detection scope
+                float itemLocationX = fireball.Physics.Location.X;
+                float itemLocationY = fireball.Physics.Location.Y;
+                int blocksWidth = block.Rectangle.Width;
+                int blocksHeight = block.Rectangle.Height;
+                int blockIndexX = (int)Math.Floor(itemLocationX / blocksWidth);
+                int blockIndexY = (int)Math.Floor(itemLocationY / blocksHeight);
+                for (int blockIndexOffsetX = -2; blockIndexOffsetX <= 2; blockIndexOffsetX++)
+                {
+                    for (int blockIndexOffsetY = -2; blockIndexOffsetY <= 2; blockIndexOffsetY++)
+                    {
+                        CheckFireballBlockCollision(fireball, blockIndexX + blockIndexOffsetX, blockIndexY + blockIndexOffsetY);
+                    }
+                }
+            }
+        }
+
+        private void CheckFireballEnemyCollision()
+        {
+            foreach (Fireball fireball in Level.Fireballs)
+            {
+                Rectangle fireballHitbox = fireball.Rectangle;
+                foreach (IEnemy collidedEnemy in Level.Enemies)
+                {
+                    Rectangle enemyHitbox = collidedEnemy.Rectangle;
+                    Rectangle intersection = Rectangle.Intersect(fireballHitbox, enemyHitbox);
+
+                    if (!intersection.IsEmpty && !collidedEnemy.IsDead)
+                    {
+                        FireballEnemyCollisionHandler.HandleCollision(fireball, collidedEnemy);
+                    }
+
+                }
+            }
+        }
+
+        private void CheckFireballBlockCollision(Fireball fireball, int blockIndexX, int blockIndexY)
+        {
+            bool enemyIsInHorizontalScope = blockIndexX >= 0 && blockIndexX < Level.Width;
+            bool enemyIsInVerticalScope = blockIndexY >= 0 && blockIndexY < Level.Height;
+            if (enemyIsInHorizontalScope && enemyIsInVerticalScope)
+            {
+                IBlock block = Level.GetBlocks()[blockIndexX][blockIndexY];
+                Rectangle fireballHitbox = fireball.Rectangle;
+
+                if (block != null)
+                {
+                    Rectangle blockHitbox = block.Rectangle;
+                    Rectangle intersection = Rectangle.Intersect(fireballHitbox, blockHitbox);
+                    if (!intersection.IsEmpty)
+                    {
+                        CollisionSide side = GetCollisionSide(intersection, fireballHitbox, blockHitbox);
+                        FireballBlockCollisionHandler.HandleCollision(fireball, block, side);
+                    }
+                }
+            }
+        }
+
+        private static CollisionSide GetCollisionSide(Rectangle intersection, Rectangle colliderHitbox, Rectangle collidedHitbox)
+        {
+            if (intersection.Width >= intersection.Height)  // Vertical collision
+            {
+                return colliderHitbox.Top <= collidedHitbox.Top ? CollisionSide.Top : CollisionSide.Bottom;
+            }
+            else // Horizontal collision
+            {
+                return colliderHitbox.Left >= collidedHitbox.Left ? CollisionSide.Right : CollisionSide.Left;
+            }
+        }
+
+        public static CollisionSide GetOppositeSide(CollisionSide side)
+        {
+            CollisionSide oppositeSide;
+
+            switch (side)
+            {
+                case CollisionSide.Top:
+                    oppositeSide = CollisionSide.Bottom;
+                    break;
+                case CollisionSide.Bottom:
+                    oppositeSide = CollisionSide.Top;
+                    break;
+                case CollisionSide.Left:
+                    oppositeSide = CollisionSide.Right;
+                    break;
+                case CollisionSide.Right:
+                    oppositeSide = CollisionSide.Left;
+                    break;
+                default:
+                    throw new InvalidOperationException("Invalid collision side provided");
+            }
+
+            return oppositeSide;
+        }
+    }
+
+Comments:
+This class is meant to handle collision detection for all game objects in the game, but I think there is a lot of similarity in the methods that we get rid of to simplify the code
+and reduce the length of the class. Trouble is, that the way the code is written right now relies on the checking of which blocks collide with the game object before calling the
+actual collision handling methods, and it makes it difficult for us to make it into a single, general all-purpose method because of slight minute differences within each collision
+handling method. 300 lines of code for a single class is indeed extremely long, it's definitely a God class at this point. We might have to refactor the methods into methods that
+takes in the type of game object as an argument in order to be able to make it a single general all-purpose method.

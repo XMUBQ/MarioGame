@@ -1,0 +1,32 @@
+﻿Review author: Bohan Zhang
+Date: 10/22/2018
+Sprint 4
+
+File: ObejctPhysics.cs
+Authored by: Keegan, Bohan, Joel
+Time taken for review: 15 minutes
+
+
+        private const float fireballJump = 512f;
+        private const float fireballMove = 32f;
+
+        private const float marioJump = 1280f;
+        private const float marioWalk = 16f;
+        private const float marioBounce = 640f;
+        private const float marioRun = 1.1f;
+
+        private const float enemyWalk = 5f;
+        private const float enemyKicked = 25f;
+
+        public bool BlockBumped { get; set; } // Temporary check to ensure bumped block collides with other objects properly
+        //private bool BlockBumped;
+        private const float blockBumped = 256f;
+        private const float blockExplode = 128f;
+
+Comments:
+Since this class is too large, only this short pieces of code is copied. We put the physics of each object in 
+this class, which is obviously not necessary. Now the cohesion of this class is very low, and the methods and 
+mechanics used by each object are completely different. If we want to do this in order to reduce the complexity 
+of the code in some objects class, I think we can add an IPhysics during refactoring, and then each object's 
+physics implements a different class. This can achieve the effect of the interface and greatly reduce the 
+cohesion of the physics class.

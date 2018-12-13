@@ -1,0 +1,93 @@
+﻿Review author: Keegan Strohm
+Date: 11/7/2018
+Sprint 5
+
+File: Fireball.cs
+Authored by: Keegan, Joel
+Time taken for review: 15 minutes
+
+using FooBarHappyHour.Factories;
+using FooBarHappyHour.Interfaces;
+using FooBarHappyHour.Physics;
+using FooBarHappyHour.Utility;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+
+namespace FooBarHappyHour.Misc
+{
+    public class Fireball : IGameObject
+    {
+        public bool RemovalFlag { get; set; }
+        public bool IsFacingRight { get; set; }
+        public bool Collidable { get => !exploded; set => Collidable = value; }
+
+        public IPhysics Physics { get => FireballPhysics; }
+        public FireballPhysics FireballPhysics { get; private set; }
+        public Rectangle Rectangle => new Rectangle((int)Physics.Location.X, (int)Physics.Location.Y, sprite.Width, sprite.Height);
+        
+        private float explosionTimer;
+        private ISprite sprite;
+        private bool exploded;
+
+        public Fireball(Vector2 location, bool isFacingRight)
+        {
+            FireballPhysics = new FireballPhysics(false, true, location);
+            IsFacingRight = isFacingRight;
+            if (isFacingRight)
+            {
+                sprite = MiscSpriteFactory.Instance.CreateFireballRightSprite();
+            }
+            else
+            {
+                sprite = MiscSpriteFactory.Instance.CreateFireballLeftSprite();
+            }
+            explosionTimer = Utils.Instance.ExplosionTime;
+        }
+
+        public void Jump()
+        {
+            FireballPhysics.Jump();
+        }
+
+        public void Explode()
+        {
+            exploded = true;
+            FireballPhysics.ResetMotion();
+            FireballPhysics.Locked = true;
+            sprite = MiscSpriteFactory.Instance.CreateFireballExplosionSprite();
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            if (!exploded)
+            {
+                if (IsFacingRight)
+                {
+                    FireballPhysics.MoveRight();
+                }
+                else
+                {
+                    FireballPhysics.MoveLeft();
+                }
+            }
+            else
+            {
+                explosionTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+                if (explosionTimer <= 0) RemovalFlag = true;
+            }
+            FireballPhysics.Update(gameTime);
+            sprite.Update(gameTime);
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            sprite.Draw(spriteBatch, Physics.Location);
+        }
+    }
+}
+
+           
+Comments: The issue with the readability is not just this class, but most classes in this project. As the project has grown the amount of states expected
+to be implemented has caused a state explosion. There are a lot of classes that have to have nested if/else/switch statements that make it hard to read.
+This class is no exception to that and specifically in the update method has if statements nested a couple layers deep, but other classes I
+have seen can be up to 5 layers which makes reading and understanding what that method is doing hard.

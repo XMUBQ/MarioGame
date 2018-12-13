@@ -1,0 +1,233 @@
+﻿Review author: Joel Wong
+Date: 12/2/2018
+Sprint 6
+
+File: CheatCodeManager.cs
+Authored by: Abdullah
+Time taken for review: 15 minutes
+
+namespace FooBarHappyHour.CheatCodes
+{
+    public class CheatCodesManager : ICheatCodes
+    {
+        public bool CheatCodeReset { get; set; }
+        private bool Lock { get; set; }
+        private bool CheatCodeTimeOut { get; set; }
+        private float ElapsedTime { get; set; }
+        private List<Keys> ExtraLiveCheatCodeKeysList;
+        private List<Keys> BigPlayerCheatCodeKeysList;
+        private List<Keys> StarCheatCodeKeysList;
+        private List<Keys> FireCheatCodeKeysList;
+        private float inputCooldown;
+        private bool disableCheatCodes;
+
+        public CheatCodesManager()
+        {
+            CheatCodeReset = false;
+            CheatCodeTimeOut = false;
+            Lock = false;
+            ElapsedTime = 0f;
+            ExtraLiveCheatCodeKeysList = new List<Keys>();
+            BigPlayerCheatCodeKeysList = new List<Keys>();
+            StarCheatCodeKeysList = new List<Keys>();
+            FireCheatCodeKeysList = new List<Keys>();
+            inputCooldown = 0f;
+            disableCheatCodes = false;
+        }
+
+        private void ExtraLiveCheatCodeHandler()
+        {
+            KeyboardState state = Keyboard.GetState();
+            if (CheatCodeReset || CheatCodeTimeOut)
+            {
+                ResetCheatCode(true, false, false, false);
+            }
+            else
+            {
+                if (state.IsKeyDown(Keys.L) || state.IsKeyDown(Keys.I) || state.IsKeyDown(Keys.V) || state.IsKeyDown(Keys.E))
+                {
+                    if (!Lock && state.IsKeyDown(Keys.L) && ExtraLiveCheatCodeKeysList.Count == 0)
+                    {
+                        ExtraLiveCheatCodeKeysList.Add(Keys.L);
+                        Lock = true;
+                        ElapsedTime = 0;
+                    }
+                    else if (state.IsKeyDown(Keys.I) && ExtraLiveCheatCodeKeysList.LastIndexOf(Keys.L) == 0 && ExtraLiveCheatCodeKeysList.LastIndexOf(Keys.I) == -1) ExtraLiveCheatCodeKeysList.Add(Keys.I);
+                    else if (state.IsKeyDown(Keys.V) && ExtraLiveCheatCodeKeysList.LastIndexOf(Keys.I) == 1 && ExtraLiveCheatCodeKeysList.LastIndexOf(Keys.V) == -1) ExtraLiveCheatCodeKeysList.Add(Keys.V);
+                    else if (state.IsKeyDown(Keys.E) && ExtraLiveCheatCodeKeysList.LastIndexOf(Keys.V) == 2)
+                    {
+                        if (SuperMarioBros.Instance.GameStateManager.Player != null) SuperMarioBros.Instance.GameStateManager.Lives++;
+                        SoundFactory.Instance.PlayExtraLifeSound();
+                        InduceCooldown();
+                        ResetCheatCode(true, false, false, false);
+                    }
+                }
+                else if (state.GetPressedKeys().Length > 0)
+                {
+                    ResetCheatCode(true, false, false, false);
+                }
+            }
+        }
+
+        private void StarCheatCodeHandler()
+        {
+            KeyboardState state = Keyboard.GetState();
+            if (CheatCodeReset || CheatCodeTimeOut)
+            {
+                ResetCheatCode(false, false, false, true);
+            }
+            else
+            {
+                if (state.IsKeyDown(Keys.S) || state.IsKeyDown(Keys.T) || state.IsKeyDown(Keys.A))
+                {
+                    if (!Lock && state.IsKeyDown(Keys.S) && StarCheatCodeKeysList.Count == 0)
+                    {
+                        StarCheatCodeKeysList.Add(Keys.S);
+                        Lock = true;
+                        ElapsedTime = 0;
+                    }
+                    else if (state.IsKeyDown(Keys.T) && StarCheatCodeKeysList.LastIndexOf(Keys.S) == 0 && StarCheatCodeKeysList.LastIndexOf(Keys.T) == -1) StarCheatCodeKeysList.Add(Keys.T);
+                    else if (state.IsKeyDown(Keys.A) && StarCheatCodeKeysList.LastIndexOf(Keys.T) == 1)
+                    {
+                        if (SuperMarioBros.Instance.GameStateManager.Player != null) SuperMarioBros.Instance.GameStateManager.Player.UseSuperStar();
+                        SoundFactory.Instance.PlayGainPowerUpSound();
+                        InduceCooldown();
+                        ResetCheatCode(false, false, false, true);
+                    }
+                }
+                else if (state.GetPressedKeys().Length > 0)
+                {
+                    ResetCheatCode(false, false, false, true);
+                }
+            }
+        }
+        
+        private void BigPlayerCheatCodeHandler()
+        {
+            KeyboardState state = Keyboard.GetState();
+            if (CheatCodeReset || CheatCodeTimeOut)
+            {
+                ResetCheatCode(false, true, false, false);
+            }
+            else
+            {
+                if (state.IsKeyDown(Keys.B) || state.IsKeyDown(Keys.I) || state.IsKeyDown(Keys.G))
+                {
+                    if (!Lock && state.IsKeyDown(Keys.B) && BigPlayerCheatCodeKeysList.Count == 0)
+                    {
+                        BigPlayerCheatCodeKeysList.Add(Keys.B);
+                        Lock = true;
+                        ElapsedTime = 0;
+                    }
+                    else if (state.IsKeyDown(Keys.I) && BigPlayerCheatCodeKeysList.LastIndexOf(Keys.B) == 0 && BigPlayerCheatCodeKeysList.LastIndexOf(Keys.I) == -1) BigPlayerCheatCodeKeysList.Add(Keys.I);
+                    else if (state.IsKeyDown(Keys.G) && BigPlayerCheatCodeKeysList.LastIndexOf(Keys.I) == 1)
+                    {
+                        if (SuperMarioBros.Instance.GameStateManager.Player != null && !SuperMarioBros.Instance.GameStateManager.Player.IsBig) SuperMarioBros.Instance.GameStateManager.Player.UsePowerUp();
+                        SoundFactory.Instance.PlayGainPowerUpSound();
+                        InduceCooldown();
+                        ResetCheatCode(false, true, false, false);
+                    }
+                }
+                else if (state.GetPressedKeys().Length > 0)
+                {
+                    ResetCheatCode(false, true, false, false);
+                }
+            }
+        }
+
+        private void FireCheatCodeHandler()
+        {
+            KeyboardState state = Keyboard.GetState();
+            if (CheatCodeReset || CheatCodeTimeOut)
+            {
+                ResetCheatCode(false, false, true, false);
+            }
+            else
+            {
+                if (state.IsKeyDown(Keys.F) || state.IsKeyDown(Keys.I) || state.IsKeyDown(Keys.E))
+                {
+                    if (!Lock && state.IsKeyDown(Keys.F) && FireCheatCodeKeysList.Count == 0)
+                    {
+                        FireCheatCodeKeysList.Add(Keys.F);
+                        Lock = true;
+                        ElapsedTime = 0;
+                    }
+                    else if (state.IsKeyDown(Keys.I) && FireCheatCodeKeysList.LastIndexOf(Keys.F) == 0 && FireCheatCodeKeysList.LastIndexOf(Keys.I) == -1) FireCheatCodeKeysList.Add(Keys.I);
+                    else if (state.IsKeyDown(Keys.E) && FireCheatCodeKeysList.LastIndexOf(Keys.I) == 1)
+                    {
+                        if (SuperMarioBros.Instance.GameStateManager.Player != null && SuperMarioBros.Instance.GameStateManager.Player.IsBig) SuperMarioBros.Instance.GameStateManager.Player.UsePowerUp();
+                        SoundFactory.Instance.PlayGainPowerUpSound();
+                        InduceCooldown();
+                        ResetCheatCode(false, false, true, false);
+                    }
+                }
+                else if (state.GetPressedKeys().Length > 0)
+                {
+                    ResetCheatCode(false, false, true, false);
+                }
+            }
+        }
+
+        private void InduceCooldown()
+        {
+            disableCheatCodes = true;
+            inputCooldown = Utils.Instance.CheatCodeCooldown;
+        }
+
+        private void CooldownTimer(GameTime gameTime)
+        {
+            inputCooldown -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+            if (inputCooldown <= 0f)
+            {
+                disableCheatCodes = false;
+                inputCooldown = 0f;
+            }
+        }
+
+        private void ResetCheatCode(bool live, bool big, bool fire, bool star)
+        {
+            if (live) ExtraLiveCheatCodeKeysList.Clear();
+            if (big) BigPlayerCheatCodeKeysList.Clear();
+            if (fire) FireCheatCodeKeysList.Clear();
+            if (star) StarCheatCodeKeysList.Clear();
+            ElapsedTime = 0;
+            CheatCodeTimeOut = false;
+            Lock = false;
+            CheatCodeReset = false;            
+        }
+
+        private void CheatCodesTimer(GameTime gameTime)
+        {
+            ElapsedTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            if (ElapsedTime > Utils.Instance.CheatCodeTimeOut)
+            {
+                CheatCodeTimeOut = true;
+                ElapsedTime = 0;
+            }
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            CheatCodesTimer(gameTime);
+            CooldownTimer(gameTime);
+            if (!disableCheatCodes)
+            {
+                ExtraLiveCheatCodeHandler();
+                BigPlayerCheatCodeHandler();
+                StarCheatCodeHandler();
+                FireCheatCodeHandler();
+            }
+        }
+    }
+}
+
+
+Comments:
+There is a bunch of repeated code that is re-used for each individual cheat code that only differs in the particular input keys as well as the cheat code effect. There's also the fact
+that the class, ResetCheatCode method, as well as its method signature will grow in parameters as we add in more cheat codes, so it might be quite inconvenient
+for us to be adding in additional cheat codes the way this is set up. We would have to add additional lines of code into the ResetCheatCode and Update methods, which both sound like 
+they should be generic enough to ignore the inner workings of each particular cheat code.
+
+As it stands we have particularly long boolean checks for our input sequences, making it difficult to alter the keys needed to activate the cheat code. We're also unable to use keys like
+'Q' and 'R' which affect the game state manager but while that is a problem that we can circumvent by establishing none of the cheat codes use said keys, we should find a way to 
+standardize the allowed input keys so we can avoid awkward codes such as "Fie" instead of "Fire".

@@ -1,0 +1,49 @@
+﻿Review author: JBohan Zhang
+Date: 9/24/2018
+Sprint 2
+File: ResetCommand.cs
+Authored by: Joel Wong
+Time taken for review:20 minutes
+public void Execute()
+        {
+            ResetMarioState();
+            ResetGameObjects();
+            ResetController();
+        }
+
+Comments: Though the ResetCommand has already reached the effect of restarting the game, this piece of code 
+still seems a little low cohesion. Since the reset instructions of each method are not too long we can put
+them in one method and as a public method in the main game class object. This can also help to hide some other 
+members in our main class.
+
+
+File: BrickBlockStateMachine.cs
+Authored by: Joel Wong
+Time taken for review: 15 minutes
+
+ class BrickBlockStateMachine
+    {
+        private ISprite blockSprite;
+
+        public BrickBlockStateMachine()
+        {
+            blockSprite = BlockSpriteFactory.Instance.CreateBrickBlockSprite();
+        }
+
+        public void Break()
+        {
+            blockSprite = BlockSpriteFactory.Instance.CreateHiddenBlockSprite();
+        }
+
+        public void Draw(SpriteBatch spriteBatch, Vector2 location)
+        {
+            blockSprite.Draw(spriteBatch, location);
+        }
+
+    }
+
+Comments: Overall it's a great simplified state pattern compared to the previous one but the name of the 
+class still confuses me. According to the current implementation, it performs like the state pattern since
+there's no switch or ifelse statement within it. It's possible to add state machine design for collision 
+test so it's still subject to change. It can be better if some comments here can explain what the basic
+design idea for this state machine.

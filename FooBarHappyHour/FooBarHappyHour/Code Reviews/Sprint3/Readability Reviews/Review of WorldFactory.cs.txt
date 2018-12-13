@@ -1,0 +1,141 @@
+﻿Review author: Abdullah Alhag
+Date: 10/3/2018
+Sprint 3
+
+File: WorldFactory.cs
+Authored by: Keegan, Joel
+Time taken for review: 10 minutes
+
+
+
+
+
+        private void CreateBlock(IWorld world, string type, float xPosition, float yPosition)
+        {
+            switch (type)
+            {
+                case "BeveledBlock":
+                    world.Blocks[(int)xPosition / blockSidePixels, (int)yPosition / blockSidePixels] = new BeveledBlock(new Vector2(xPosition, yPosition));
+                    break;
+                case "BrickBlock":
+                    world.Blocks[(int)xPosition / blockSidePixels, (int)yPosition / blockSidePixels] = new BrickBlock(new Vector2(xPosition, yPosition));
+                    break;
+                case "GroundBlock":
+                    world.Blocks[(int)xPosition / blockSidePixels, (int)yPosition / blockSidePixels] = new GroundBlock(new Vector2(xPosition, yPosition));
+                    break;
+                case "HiddenBlock":
+                    world.Blocks[(int)xPosition / blockSidePixels, (int)yPosition / blockSidePixels] = new HiddenBlock(new Vector2(xPosition, yPosition));
+                    break;
+                case "Pipe":
+                    world.Blocks[(int)xPosition / blockSidePixels, (int)yPosition / blockSidePixels] = new Pipe(new Vector2(xPosition, yPosition));
+                    break;
+                case "QuestionBlock":
+                    world.Blocks[(int)xPosition / blockSidePixels, (int)yPosition / blockSidePixels] = new QuestionBlock(new Vector2(xPosition, yPosition));
+                    break;
+                case "UsedBlock":
+                    world.Blocks[(int)xPosition / blockSidePixels, (int)yPosition / blockSidePixels] = new UsedBlock(new Vector2(xPosition, yPosition));
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void CreateEnemy(IWorld world, string type, float xPosition, float yPosition)
+        {
+            switch (type)
+            {
+                case "Goomba":
+                    world.Enemies.Add(new Goomba(new Vector2(xPosition, yPosition)));
+                    break;
+                case "Koopa":
+                    world.Enemies.Add(new Koopa(new Vector2(xPosition, yPosition)));
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void CreateItem(IWorld world, string type, float xPosition, float yPosition)
+        {
+            switch (type)
+            {
+                case "Coin":
+                    world.Items.Add(new Coin(new Vector2(xPosition, yPosition)));
+                    break;
+                case "FireFlower":
+                    world.Items.Add(new FireFlower(new Vector2(xPosition, yPosition)));
+                    break;
+                case "GreenMushroom":
+                    world.Items.Add(new GreenMushroom(new Vector2(xPosition, yPosition)));
+                    break;
+                case "RedMushroom":
+                    world.Items.Add(new RedMushroom(new Vector2(xPosition, yPosition)));
+                    break;
+                case "Star":
+                    world.Items.Add(new Star(new Vector2(xPosition, yPosition)));
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void CreateScenery(IWorld world, string type, float xPosition, float yPosition)
+        {
+            switch (type)
+            {
+                case "BigBush":
+                    world.Scenery.Add(new BigBush(new Vector2(xPosition, yPosition)));
+                    break;
+                case "SmallBush":
+                    world.Scenery.Add(new SmallBush(new Vector2(xPosition, yPosition)));
+                    break;
+                case "BigCloud":
+                    world.Scenery.Add(new BigCloud(new Vector2(xPosition, yPosition)));
+                    break;
+                case "SmallCloud":
+                    world.Scenery.Add(new SmallCloud(new Vector2(xPosition, yPosition)));
+                    break;
+                case "BigHill":
+                    world.Scenery.Add(new BigHill(new Vector2(xPosition, yPosition)));
+                    break;
+                case "SmallHill":
+                    world.Scenery.Add(new SmallHill(new Vector2(xPosition, yPosition)));
+                    break;
+                default:
+                    break;
+            }
+        }
+
+
+Comments:
+These four function which uses switch statements might not be the best way around loading the world as each time a new type of
+block/item introduced to the world, a new switch statement must also be added. Although I understand the separation of these 
+four methods makes it easier to understand the logic, they do seem to share the same functionality. I wonder if there is a
+way to load the world without having that many methods/switch statements.
+Maybe a generic loader that will initiate an object based on the string it is given.
+
+
+        private static readonly WorldFactory instance = new WorldFactory();
+        private const int blockSidePixels = 16;
+
+
+        public IWorld CreateWorldDeveloper()
+        {
+            return Load("Developer.xml", 100, 100);
+        }
+
+        public IWorld CreateWorld11()
+        {
+            return Load("1-1.xml", 208, 16);
+        }
+
+
+
+Comments:
+I am worried about the use of magic numbers over here. the block side pixels can be found generically by the following:
+
+IBlock block = new HiddenBlock(new Vector2(0, 0));
+int blockSidePixels = block.GetRectangle().Width;
+
+Same goes for creating the worlds. A possible solution would be to store these magic numbers in the xml file and read it
+later but that might require the file to be open already.

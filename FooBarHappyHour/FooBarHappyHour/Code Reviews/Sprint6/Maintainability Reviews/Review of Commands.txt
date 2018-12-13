@@ -1,0 +1,32 @@
+﻿Review author: Abdullah Alhag
+Date: 12/4/2018
+Sprint 6
+
+File: AbilityCommand.cs
+Authored by: BKeegan
+Time taken for review: 15 minutes
+
+namespace FooBarHappyHour.Commands
+{
+    public class AbilityCommand : ICommand
+    {
+        private GameStateManager gameStateManager;
+
+        public AbilityCommand(GameStateManager gameStateManager)
+        {
+            this.gameStateManager = gameStateManager;
+        }
+
+        public void Execute(PlayerSelection playerSelection)
+        {
+            gameStateManager.Ability(playerSelection);
+        }
+    }
+}
+
+
+
+This class as most of Commands class do only one thing and can be reduced to one line of code. I think having to move between folder each time we want to add
+commands is really unnecessary especially for commands that being issued by one type of controllers. 
+
+I recommend in such case to use a map between commands and action instead of what is being done here. How cheat codes map implemented for example. 

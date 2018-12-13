@@ -1,0 +1,182 @@
+﻿Review author: Keegan Strohm
+Date: 10/22/2018
+Sprint 4
+
+File: World.cs
+Authored by: Keegan, Bohan, Joel, Abdullah
+Time taken for review: 15 minutes
+
+
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using FooBarHappyHour.Interfaces;
+using FooBarHappyHour.Player;
+using FooBarHappyHour.Blocks;
+
+namespace FooBarHappyHour.World
+{
+    class World : IWorld
+    {
+        public int Width { get; private set; }
+        public int Height { get; private set; }
+        public bool Frozen { get; set; }
+        public IMario Mario { get; set; }
+
+        private IBlock[][] blocks;
+
+        public IBlock[][] GetBlocks()
+        {
+            return blocks;
+        }
+
+        public void SetBlocks(IBlock[][] value)
+        {
+            blocks = value;
+        }
+
+        public IList<IEnemy> Enemies { get; set; }
+        public IList<IItem> Items { get; set; }
+        public IList<IScenery> Scenery { get; set; }
+        public IList<IFireball> Fireballs { get; set; }
+
+        private IList<IEnemy> enemyRemovalList;
+        private IList<IItem> itemRemovalList;
+        private IList<IBlock> blockRemovalList;
+        private IList<IFireball> fireballRemovalList;
+
+        public World(int width, int height)
+        {
+            Width = width;
+            Height = height;
+            Frozen = false;
+            Mario = new Mario();
+            SetBlocks(new IBlock[Width][]);
+            for (int i = 0; i < Width; i++)
+            {
+                GetBlocks()[i] = new IBlock[Height];
+            }
+            Enemies = new List<IEnemy>();
+            Items = new List<IItem>();
+            Scenery = new List<IScenery>();
+            Fireballs = new List<IFireball>();
+
+            enemyRemovalList = new List<IEnemy>();
+            itemRemovalList = new List<IItem>();
+            blockRemovalList = new List<IBlock>();
+            fireballRemovalList = new List<IFireball>();
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            if (!Frozen)
+            {
+                foreach (IScenery scenery in Scenery)
+                {
+                    scenery.Update(gameTime);
+                }
+                for (int i = 0; i < Width; i++)
+                {
+                    for (int j = 0; j < Height; j++)
+                    {
+                        if (GetBlocks()[i][j] != null)
+                        {
+                            GetBlocks()[i][j].Update(gameTime);
+                            if (GetBlocks()[i][j] is BrickBlock)
+                            {
+                                BrickBlock brickBlock = GetBlocks()[i][j] as BrickBlock;
+                                if (brickBlock.Broken) GetBlocks()[i][j] = null;
+                            }
+                        }
+                    }
+                }
+                foreach (IItem item in Items)
+                {
+                    item.Update(gameTime);
+                    if (item.RemoveFlag) itemRemovalList.Add(item);
+                }
+                foreach (IEnemy enemy in Enemies)
+                {
+                    enemy.Update(gameTime);
+                    if (enemy.RemovalFlag) enemyRemovalList.Add(enemy);
+                }
+                foreach (IFireball fireball in Fireballs)
+                {
+                    fireball.Update(gameTime);
+                    if (fireball.RemovalFlag) fireballRemovalList.Add(fireball);
+                }
+                RemoveGameObjects();
+            }
+            Mario.Update(gameTime);
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            foreach (IScenery scenery in Scenery)
+            {
+                scenery.Draw(spriteBatch);
+            }
+            foreach (IItem item in Items)
+            {
+                item.Draw(spriteBatch);
+            }
+            for (int i = 0; i < Width; i++)
+            {
+                for (int j = 0; j < Height; j++)
+                {
+                    if (GetBlocks()[i][j] != null)
+                    {
+                        GetBlocks()[i][j].Draw(spriteBatch);
+                    }
+                }
+            }
+            foreach (IEnemy enemy in Enemies)
+            {
+                enemy.Draw(spriteBatch);
+            }
+            foreach (IFireball fireball in Fireballs)
+            {
+                fireball.Draw(spriteBatch);
+            }
+            Mario.Draw(spriteBatch);
+        }
+
+        public void RemoveGameObjects()
+        {
+            RemoveEnemies();
+            RemoveItems();
+            RemoveFireballs();
+        }
+
+        public void RemoveEnemies()
+        {
+            foreach (IEnemy enemy in enemyRemovalList)
+            {
+                Enemies.Remove(enemy);
+            }
+        }
+
+        public void RemoveItems()
+        {
+            foreach (IItem item in itemRemovalList)
+            {
+                Items.Remove(item);
+            }
+        }
+
+        public void RemoveFireballs()
+        {
+            foreach (IFireball fireball in fireballRemovalList)
+            {
+                Fireballs.Remove(fireball);
+            }
+        }
+    }
+}
+
+
+Comments:
+This class has grown quite a lot since sprint 3 and has held up pretty well. I think that we could eventually refactor this class
+so that there are far less loops in it. By getting this class down to less loops performance could be improved. As of right now this
+class does not cause bad performance, but in the future I think that this could be improved upon and made better. Also as of right now
+not everything is using the remove removal flag to its fullest and will hopefully get standardized in future work.

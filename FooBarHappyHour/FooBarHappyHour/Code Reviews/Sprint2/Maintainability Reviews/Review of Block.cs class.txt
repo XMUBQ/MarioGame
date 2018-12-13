@@ -1,0 +1,63 @@
+Review author: Joel Wong
+Date: 9/22/2018
+Sprint 2
+
+File: Block.cs
+Authored by: Abdullah
+Time taken for review: 25 minutes
+
+public class Block
+    {
+
+        private IBlockState questionBlockState;
+        private IBlockState usedBlockState;
+        private IBlockState hiddenBlockState;
+        private IBlockState brickBlockState;
+        private IBlockState groundBlockState;
+        private IBlockState beveledBlockState;
+        private IBlockState pipeState;
+        public IBlockState currentState { get; set; }
+        public Block(BlocksFactory blocksFactory, string current)
+        {
+            this.questionBlockState = new QuestionBlockState(blocksFactory, this);
+            this.usedBlockState = new UsedBlockState(blocksFactory, this);
+            this.hiddenBlockState = new HiddenBlockState(blocksFactory, this);
+            this.brickBlockState = new BrickBlockState(blocksFactory, this);
+            this.groundBlockState = new GroundBlockState(blocksFactory, this);
+            this.beveledBlockState = new BeveledBlockState(blocksFactory, this);
+            this.pipeState = new PipeState(blocksFactory, this);
+
+            switch (current)
+            {
+                case "QuestionBlock":
+                    this.currentState = this.questionBlockState;
+                    break;
+                case "UsedBlock":
+                    this.currentState = this.usedBlockState;
+                    break;
+                case "HiddenBlock":
+                    this.currentState = this.hiddenBlockState;
+                    break;
+                case "BrickBlock":
+                    this.currentState = this.brickBlockState;
+                    break;
+                case "GroundBlock":
+                    this.currentState = this.groundBlockState;
+                    break;
+                case "BeveledBlock":
+                    this.currentState = this.beveledBlockState;
+                    break;
+                default:
+                    this.currentState = this.pipeState;
+                    break;
+            }
+        }
+
+Comments:
+As it currently stands, I find that the block class is attempting to take on too many responsibilities at a time by trying to embody every 
+block type it possibly can. This not only violates the single responsibility principal, but also is also considered a "Large Class" in code
+smells as the entire class is over 100 lines long. In the case of the variable names used to change block states, it is extremely fragile
+to use String cases as it is extremely hardcoded and difficult to keep track of, which is another code smell of excessive use of literals.
+I suggest following the implementation of Mario.cs or enemy classes like Goomba.cs and Koopa.cs which isolates the concern of what block
+type it should be, that means creating a new block class for every block type, each with their own unique handling of state transitions
+as opposed to a giant Block class that tries to handle everything (follow the interface segregation principal).

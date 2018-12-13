@@ -1,0 +1,282 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{647FE368-235F-429D-8C8A-93565ECBAC1A}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>FooBarHappyHour</RootNamespace>
+    <AssemblyName>FooBarHappyHour</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <MonoGamePlatform>Windows</MonoGamePlatform>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\$(MonoGamePlatform)\$(Platform)\$(Configuration)\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>BasicDesignGuidelineRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>7.3</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\$(MonoGamePlatform)\$(Platform)\$(Configuration)\</OutputPath>
+    <DefineConstants>TRACE;WINDOWS</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>7.3</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Audio\SongManager.cs" />
+    <Compile Include="Blocks\BeveledBlock.cs" />
+    <Compile Include="Blocks\GroundBlock.cs" />
+    <Compile Include="Blocks\BrokenBlock.cs" />
+    <Compile Include="Blocks\Pipe.cs" />
+    <Compile Include="Camera\MyCamera.cs" />
+    <Compile Include="Collision\CollisionDetection.cs" />
+    <Compile Include="Collision\EnemyBlockCollisionHandler.cs" />
+    <Compile Include="Collision\EnemyCollisionHandler.cs" />
+    <Compile Include="Collision\EnemyEnemyCollisionHandler.cs" />
+    <Compile Include="Collision\FireballBlockCollisionHandler.cs" />
+    <Compile Include="Collision\FireballEnemyCollisionHandler.cs" />
+    <Compile Include="Collision\ItemBlockCollisionHandler.cs" />
+    <Compile Include="Collision\PlayerBlockCollisionHandler.cs" />
+    <Compile Include="Collision\PlayerEnemyCollisionHandler.cs" />
+    <Compile Include="Collision\PlayerItemCollisionHandler.cs" />
+    <Compile Include="Collision\PlayerTeleporterCollisionHandler.cs" />
+    <Compile Include="Collision\PlayerFlagpoleCollisionHandler.cs" />
+    <Compile Include="Collision\PlayerCastleCollisionHandler.cs" />
+    <Compile Include="Commands\AbilityCommand.cs" />
+    <Compile Include="Commands\PauseCommand.cs" />
+    <Compile Include="Commands\SwitchRightCommand.cs" />
+    <Compile Include="Commands\SwitchLeftCommand.cs" />
+    <Compile Include="Commands\UpCommand.cs" />
+    <Compile Include="Controllers\GamepadController.cs" />
+    <Compile Include="Enemies\PiranhaPlant.cs" />
+    <Compile Include="Factories\BlockSpriteFactory.cs" />
+    <Compile Include="Factories\EnemyFactory.cs" />
+    <Compile Include="Factories\HUDFactory.cs" />
+    <Compile Include="Factories\MiscSpriteFactory.cs" />
+    <Compile Include="Factories\ItemFactory.cs" />
+    <Compile Include="Factories\ScenerySpriteFactory.cs" />
+    <Compile Include="Factories\SoundFactory.cs" />
+    <Compile Include="Interfaces\ITeleporter.cs" />
+    <Compile Include="MetaStates\GameOverState.cs" />
+    <Compile Include="MetaStates\GameStateManager.cs" />
+    <Compile Include="Interfaces\IController.cs" />
+    <Compile Include="Interfaces\ICheatCodes.cs" />
+    <Compile Include="Interfaces\IGameObject.cs" />
+    <Compile Include="Interfaces\IGameState.cs" />
+    <Compile Include="Interfaces\IGoombaState.cs" />
+    <Compile Include="Interfaces\IKoopaState.cs" />
+    <Compile Include="Interfaces\IPlayerMovementState.cs" />
+    <Compile Include="Interfaces\IPhysics.cs" />
+    <Compile Include="Interfaces\IScenery.cs" />
+    <Compile Include="Interfaces\IMisc.cs" />
+    <Compile Include="Interfaces\IWorld.cs" />
+    <Compile Include="Interfaces\IPlayerAbilityState.cs" />
+    <Compile Include="Interfaces\IPlayerAnimationState.cs" />
+    <Compile Include="Interfaces\IPlayerPowerUpState.cs" />
+    <Compile Include="Interfaces\IPlayerSizeState.cs" />
+    <Compile Include="Interfaces\IPlayerVitalState.cs" />
+    <Compile Include="Items\NullItem.cs" />
+    <Compile Include="Items\PowerUp.cs" />
+    <Compile Include="Interfaces\IMetaState.cs" />
+    <Compile Include="MetaStates\IntroState.cs" />
+    <Compile Include="MetaStates\MenuState.cs" />
+    <Compile Include="MetaStates\WorldState.cs" />
+    <Compile Include="MetaStates\WorldTransitionState.cs" />
+    <Compile Include="Misc\EnemySpawner.cs" />
+    <Compile Include="Misc\Fireball.cs" />
+    <Compile Include="Misc\Castle.cs" />
+    <Compile Include="Physics\FireballPhysics.cs" />
+    <Compile Include="Physics\EnemyPhysics.cs" />
+    <Compile Include="Physics\BlockPhysics.cs" />
+    <Compile Include="Physics\GeneralPhysics.cs" />
+    <Compile Include="Physics\PlayerPhysics.cs" />
+    <Compile Include="Physics\ItemPhysics.cs" />
+    <Compile Include="Physics\SceneryPhysics.cs" />
+    <Compile Include="Players\Player.cs" />
+    <Compile Include="Score\ScoreManager.cs" />
+    <Compile Include="States\PlayerAbilityShootFireState.cs" />
+    <Compile Include="States\PlayerAbilityRunState.cs" />
+    <Compile Include="States\PlayerPowerUpInvincibleState.cs" />
+    <Compile Include="States\PlayerPowerUpFireState.cs" />
+    <Compile Include="States\PlayerPowerUpSuperState.cs" />
+    <Compile Include="States\PlayerPowerUpNormalState.cs" />
+    <Compile Include="States\PlayerSizeBigState.cs" />
+    <Compile Include="States\PlayerSizeSmallState.cs" />
+    <Compile Include="States\PlayerVitalDeadState.cs" />
+    <Compile Include="States\PlayerVitalAliveState.cs" />
+    <Compile Include="States\PlayerAnimationDownState.cs" />
+    <Compile Include="States\PlayerAnimationUpState.cs" />
+    <Compile Include="States\PlayerAnimationRunState.cs" />
+    <Compile Include="States\PlayerMovementState.cs" />
+    <Compile Include="States\PlayerAnimationIdleState.cs" />
+    <Compile Include="Scenery\SceneryObject.cs" />
+    <Compile Include="Score\ScoreObject.cs" />
+    <Compile Include="Sprites\DynamicSprite.cs" />
+    <Compile Include="Sprites\StaticSprite.cs" />
+    <Compile Include="Teleporters\Teleporter.cs" />
+    <Compile Include="Utility\MultiArray.cs" />
+    <Compile Include="Utility\Utils.cs" />
+    <Compile Include="World\World.cs" />
+    <Compile Include="Factories\WorldFactory.cs" />
+    <Compile Include="States\HiddenBlockStateMachine.cs" />
+    <Compile Include="States\QuestionBlockStateMachine.cs" />
+    <Compile Include="States\BrickBlockStateMachine.cs" />
+    <Compile Include="Blocks\BrickBlock.cs" />
+    <Compile Include="Blocks\HiddenBlock.cs" />
+    <Compile Include="Blocks\QuestionBlock.cs" />
+    <Compile Include="Blocks\UsedBlock.cs" />
+    <Compile Include="Commands\DownCommand.cs" />
+    <Compile Include="Commands\IdleCommand.cs" />
+    <Compile Include="Commands\LeftCommand.cs" />
+    <Compile Include="Commands\RightCommand.cs" />
+    <Compile Include="Commands\JumpCommand.cs" />
+    <Compile Include="Commands\QuitCommand.cs" />
+    <Compile Include="Commands\ResetCommand.cs" />
+    <Compile Include="Controllers\KeyboardController.cs" />
+    <Compile Include="CheatCodes\CheatCodesManager.cs" />
+    <Compile Include="Factories\EnemySpriteFactory.cs" />
+    <Compile Include="Enemies\Goomba.cs" />
+    <Compile Include="Interfaces\IBlock.cs" />
+    <Compile Include="Interfaces\IEnemy.cs" />
+    <Compile Include="Interfaces\IEnemyState.cs" />
+    <Compile Include="Interfaces\IPlayer.cs" />
+    <Compile Include="Interfaces\IItem.cs" />
+    <Compile Include="Factories\ItemSpriteFactory.cs" />
+    <Compile Include="Items\Coin.cs" />
+    <Compile Include="Items\GreenMushroom.cs" />
+    <Compile Include="Items\SuperStar.cs" />
+    <Compile Include="Enemies\Koopa.cs" />
+    <Compile Include="Misc\Flagpole.cs" />
+    <Compile Include="Factories\PlayerSpriteFactory.cs" />
+    <Compile Include="States\GoombaFlippedState.cs" />
+    <Compile Include="States\GoombaWalkingState.cs" />
+    <Compile Include="States\GoombaStompedState.cs" />
+    <Compile Include="States\KoopaFlippedState.cs" />
+    <Compile Include="States\KoopaWalkingState.cs" />
+    <Compile Include="States\KoopaRevivingState.cs" />
+    <Compile Include="States\KoopaKickedState.cs" />
+    <Compile Include="States\KoopaStompedIdleState.cs" />
+    <Compile Include="SuperMarioBros.cs" />
+    <Compile Include="Interfaces\ICommand.cs" />
+    <Compile Include="Interfaces\ISprite.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="MonoGame.Framework">
+      <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\Windows\MonoGame.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Code Reviews\Sprint2\Maintainability Reviews\Review of Mushroom.cs.txt" />
+    <Content Include="Code Reviews\Sprint2\Maintainability Reviews\Review of ResetCommand and block state.txt" />
+    <Content Include="Code Reviews\Sprint2\Readability Reviews\Review of state implementation.txt" />
+    <Content Include="Code Reviews\Sprint2\Maintainability Reviews\Review of SuperMarioBros.cs class.txt" />
+    <Content Include="Code Reviews\Sprint3\Maintainability Reviews\Review of Block Collision.txt" />
+    <Content Include="Code Reviews\Sprint3\Maintainability Reviews\Review of CollisionDetection.cs.txt" />
+    <Content Include="Code Reviews\Sprint3\Maintainability Reviews\Review of PlayerSpriteFactory.cs.txt" />
+    <Content Include="Code Reviews\Sprint3\Maintainability Reviews\Review of WorldFactory.cs.txt" />
+    <Content Include="Code Reviews\Sprint3\Readability Reviews\Review of WorldFactory.cs.txt" />
+    <Content Include="Code Reviews\Sprint3\Readability Reviews\Review of BrickBlock.cs.txt" />
+    <Content Include="Code Reviews\Sprint3\Readability Reviews\Review of CollisionDetection.cs.txt" />
+    <Content Include="Code Reviews\Sprint3\Readability Reviews\Review of CollisionDetection2.txt" />
+    <Content Include="Code Reviews\Sprint4\Maintainability Reviews\Review of itemfactory.cs.txt" />
+    <Content Include="Code Reviews\Sprint4\Maintainability Reviews\Review of CollisionDetection.cs.txt" />
+    <Content Include="Code Reviews\Sprint4\Maintainability Reviews\Review of fireball.cs.txt" />
+    <Content Include="Code Reviews\Sprint4\Maintainability Reviews\Review of GeneralPhysics.cs.txt" />
+    <Content Include="Code Reviews\Sprint4\Readability Reviews\Review of BrickBlock.cs.txt" />
+    <Content Include="Code Reviews\Sprint4\Readability Reviews\Review of World.cs.txt" />
+    <Content Include="Code Reviews\Sprint4\Readability Reviews\Review of ObjectPhysics.cs.txt" />
+    <Content Include="Code Reviews\Sprint5\Maintainability Reviews\Review of GameStateManager.txt" />
+    <Content Include="Code Reviews\Sprint5\Maintainability Reviews\Review of WorldFactory.cs.txt" />
+    <Content Include="Code Reviews\Sprint5\Maintainability Reviews\Review of WorldFactory2.txt" />
+    <Content Include="Code Reviews\Sprint5\Readability Reviews\Review of Fireball.cs.txt" />
+    <Content Include="Code Reviews\Sprint5\Readability Reviews\Review of GameStateManager.txt" />
+    <Content Include="Code Reviews\Sprint5\Readability Reviews\Review of Player.cs.txt" />
+    <Content Include="Code Reviews\Sprint5\Readability Reviews\Review of Score system.txt" />
+    <Content Include="Code Reviews\Sprint5\Maintainability Reviews\Review of World.cs.txt" />
+    <Content Include="Code Reviews\Sprint6\Maintainability Reviews\Cheatcode review 2.txt" />
+    <Content Include="Code Reviews\Sprint6\Maintainability Reviews\Review of Commands.txt" />
+    <Content Include="Code Reviews\Sprint6\Maintainability Reviews\Review of CheatCodeManager.txt" />
+    <Content Include="Code Reviews\Sprint6\Maintainability Reviews\Review of KeyboardController.cs.txt" />
+    <Content Include="Code Reviews\Sprint6\Readability Reviews\Review of ScoreManager.cs.txt" />
+    <Content Include="Code Reviews\Sprint6\Readability Reviews\Review of WorldState.cs.txt" />
+    <Content Include="Code Reviews\Sprint6\Readability Reviews\GameStateManager.cs.txt" />
+    <Content Include="Code Reviews\Sprint6\Readability Reviews\Review over constant in some files.txt" />
+    <Content Include="Icon.ico" />
+    <Content Include="Raw Assets\smb1_misc_sprites.gif" />
+    <Content Include="Raw Assets\smb1_scenery_sprites.gif" />
+    <Content Include="Raw Assets\smb_enemies_sheet.png" />
+    <Content Include="Raw Assets\smb_items_sheet.png" />
+    <Content Include="Raw Assets\smb_luigi_sheet.png" />
+    <Content Include="Raw Assets\smb_mario_sheet.png" />
+    <Content Include="Team Reflection\Sprint2\TeamReflection.txt" />
+    <Content Include="Team Reflection\Sprint3\TeamReflection.txt" />
+    <Content Include="Team Reflection\Sprint4\TeamReflection.txt" />
+    <Content Include="Team Reflection\Sprint5\TeamReflection.txt" />
+    <Content Include="Team Reflection\Sprint6\TeamReflection.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <MonoGameContentReference Include="Content\Content.mgcb" />
+    <None Include="app.manifest" />
+    <Content Include="Code Reviews\Sprint2\Maintainability Reviews\Review of Block.cs class.txt" />
+    <Content Include="Code Reviews\Sprint2\Readability Reviews\KeyboardController class.txt" />
+    <Content Include="Code Reviews\Sprint2\Readability Reviews\Review of BlocksFactory class.txt" />
+    <Content Include="Code Reviews\Sprint2\Readability Reviews\Review of main game class.txt" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,66 @@
+﻿Review author: Abdullah Alhag
+Date: 9/19/2018
+Sprint 2
+
+Files: MarioDeadState.cs
+Authored by: Keegan
+Time taken for review: 20 minutes
+
+namespace FooBarHappyHour.States
+{
+    class MarioDeadState : IMarioState
+    {
+        private IMario mario;
+        private ISprite sprite;
+
+        public MarioDeadState(IMario mario)
+        {
+            this.mario = mario;
+            sprite = MarioSpriteFactory.Instance.CreateMarioDeadSprite();
+        }
+
+        public void Idle()
+        {
+            // Nothing here to do...
+        }
+
+        public void Up()
+        {
+            // Nothing here to do...
+        }
+
+        public void Down()
+        {
+            // Nothing here to do...
+        }
+
+        public void Left()
+        {
+            // Nothing here to do...
+        }
+
+        public void Right()
+        {
+            // Nothing here to do...
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            sprite.Update(gameTime);
+        }
+
+        public void Draw(SpriteBatch spriteBatch, Vector2 location)
+        {
+            sprite.Draw(spriteBatch, location);
+        }
+    }
+}
+
+
+Comments:
+I do not partially have an issue with the implementation as much with the design which does not only add more to the complexity
+but makes it extremely hard to maintain given how many classes needs to be updated in case of requirements change in the future. 
+Although this design pattern makes things look simpler at first glance but trying to actually debug the code might prove to be a hassle 
+in the future. Moreover, although along the way this might change, the code above shows that many methods need not to be implemented
+by all states raising the question if there might be a better way to implement Mario sprites and states.
+

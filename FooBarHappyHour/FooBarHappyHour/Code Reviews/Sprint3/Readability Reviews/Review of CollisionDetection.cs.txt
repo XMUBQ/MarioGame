@@ -1,0 +1,51 @@
+Review author: Joel Wong
+Date: 10/1/2018
+Sprint 3
+
+File: CollisionDetection.cs
+Authored by: Abdullah, Bohan, Joel
+Time taken for review: 10 minutes
+
+Comments:
+private void CheckMarioBlockCollision()
+        {
+            Rectangle marioHitbox = level.Mario.GetRectangle();
+            
+            float xCorr = level.Mario.Location.X;
+            float yCorr = level.Mario.Location.Y;
+            int indexX = (int)Math.Floor(xCorr / 16);
+            int indexY = (int)Math.Floor(yCorr / 16);
+            IBlock block;
+
+            for(int i = -2; i <= 2; i++)
+            {
+                for (int j = -2; j <= 2; j++)
+                {
+                    if((indexX + i) >= 0 && (indexX + i) < level.Width && (indexY + j) >= 0 && (indexY + j) < level.Height)
+                    {
+                        block = level.Blocks[indexX + i, indexY + j];
+
+                        if (block != null && !(block is DisappearBlock))
+                        {
+                            Rectangle blockHitbox = block.GetRectangle();
+                            Rectangle intersection = Rectangle.Intersect(marioHitbox, blockHitbox);
+
+                            if (!intersection.IsEmpty)
+                            {
+                                CollisionSide side = GetCollisionSide(intersection, marioHitbox, blockHitbox);
+                                MarioBlockCollisionHandler.HandleCollision(level.Mario, block, side, level.Blocks, (indexX + i), (indexY + j));
+                            }
+                        }
+                    }
+
+                }
+            }
+           
+
+        }
+
+I feel there is a violation of readability in this method with the use of 'i' and 'j' as variable names because they carry no meaning as to what they represent in the loop
+(RE: Excessively short identifier code smell). The use of the magic numbers -2, 2 and 16 is also dangerous as it's hard to interpret what function the values are supposed to be reflecting.
+There is also a huge amount of nesting going on here (5 layers) that really adds into cyclomatic complexity of the code, it might be better to break the method up into several
+smaller functions to make it more readable. Additionally, consider adopting separation of concerns as this method tries to handle both collision detection as well as collision response
+simultaneously, making it very tightly coupled in that the method needs to know the state of the block in order to fulfill the collision detection function.

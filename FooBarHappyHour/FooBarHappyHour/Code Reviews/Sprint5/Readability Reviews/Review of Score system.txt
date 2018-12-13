@@ -1,0 +1,31 @@
+﻿Review author: Bohan Zhang
+Date: 11/7/2018
+Sprint 5
+
+File: PlayItemCollisionHandler.cs PlayerBlockCollisionHandler.cs
+Authored by: Abdullah
+Time taken for review: 15 minutes
+
+                hiddenBlock.BeBumped();
+                hiddenBlock.SpawnItem();
+                if(hiddenBlock.ContainCoin)
+                {
+			       SuperMarioBros.Instance.GameStateManager.Coins++;
+				}
+				 SuperMarioBros.Instance.GameStateManager.PrimaryWorld.Scores.Add(new ScoreObject(Utils.Instance.PowerUpItemsScore, player.MovementState.Location));
+                if (item is GreenMushroom)
+                {
+                    HandleGreenMushroomCollision(player, item as GreenMushroom);
+                }
+                else if (item is SuperStar)
+                {
+                    HandleSuperStarCollision(player, item as SuperStar);
+                }
+                else if (item is PowerUp)
+                {
+                    HandlePowerUpCollision(player, item as PowerUp);
+                }
+           
+Comments: Currently all the updates of the score board all happen in the collision handler class. That's a low 
+cohesion code and we'd better put these updates in each methods of items to reduce the redundant code. We can 
+also take the advantage of delegate in our refactoring.

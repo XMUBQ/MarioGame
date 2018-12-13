@@ -1,0 +1,38 @@
+﻿Review author: Bohan Zhang
+Date: 11/14/2018
+Sprint 5
+
+File: WordFactory.cs
+Authored by: Joel, Keegan, Abdullah, Bohan
+Time taken for review: 10 minutes
+{
+            switch (name)
+            {
+                case "Player":
+                    CreatePlayer(world, type, xPosition, yPosition);
+                    break;
+                case "Block":
+                    CreateBlock(world, type, xPosition, yPosition);
+                    break;
+                case "Enemy":
+                    CreateEnemy(world, type, xPosition, yPosition);
+                    break;
+                case "Item":
+                    CreateItem(world, type, xPosition, yPosition);
+                    break;
+                case "Scenery":
+                    CreateScenery(world, type, xPosition, yPosition);
+                    break;
+                case "Misc":
+                    CreateMisc(world, type, xPosition, yPosition);
+                    break;
+                case "Teleporter":
+                    CreateTeleporter(world, type, xPosition, yPosition);
+                    break;
+                default:
+                    break;
+            }
+
+Comments: Since we already refactored block creation using dictionary, we'd better keep consistent with it and
+also use some dictionaries for these switch case statment. Using dictionary actually would not simplify the 
+amount of our codes, but it looks better and reduce lots of pipelines. 

@@ -1,0 +1,21 @@
+Review author: Joel Wong
+Date: 10/6/2018
+Sprint 3
+
+File: CollisionDetection.cs
+Authored by: Abdullah, Bohan, Joel
+Time taken for review: 10 minutes
+
+Comments:
+After refactoring I think the class is a lot more readable while having clear separations of concerns for detecting collisions. We not only have the optimization of checking
+collision between mario and blocks, but the newly refactored code does not need to know too much about the game objects that mario has collided with in order to do its job.
+Each portion of the code generally has a single responsibility so it's mostly coherent within each block of code, and they don't have as much cyclomatic complexity as before.
+
+public enum CollisionSide { Left, Right, Top, Bottom };
+
+Professor Kirby did go over the cons of using enums that scopes beyond the class like the lack of reusability and such, but in my opinion the use of enums here is justifiable
+since we only really have four possible collisions between any two game objects throughout the entire game, and the enum isn't really used anywhere outside the scope of collision
+detection and response. In the long run maybe we can consider turning this into separate interfaces but we'd have to consider the drawbacks of those as well. I also don't any added
+benefit of reusability for this enum because it's highly specific in its job of handling collision detection and responses between game objects, which is not something that needs to
+be repeatedly called by other classes. As long as there are no classes that are not involved in collision calling the enum then we should be able to continue using enums to keep our 
+collision side detection. 

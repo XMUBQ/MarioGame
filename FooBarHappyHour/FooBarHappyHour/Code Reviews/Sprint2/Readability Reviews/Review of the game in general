@@ -1,0 +1,19 @@
+Review author: Abdullah Alhag
+Date: 9/19/2018
+Sprint 2
+
+File: SuperMarioBros.cs
+Authored by: Abdullah, Bohan, Joel, Keegan
+Time taken for review: 25 minutes
+
+Comments:
+
+
+1) Sprite Factories
+I believe that giving the similarity of the sprites factories we might want to combine all factories into single factory class.
+
+2) States and classes
+
+Many part of the game seem repetitive. For instance, both Mario and enemy classes/states share very much same methods. 
+Same is true for items and block classes. It might a good idea to consider combine some of these classes to ease readability and 
+reduce redundancy.

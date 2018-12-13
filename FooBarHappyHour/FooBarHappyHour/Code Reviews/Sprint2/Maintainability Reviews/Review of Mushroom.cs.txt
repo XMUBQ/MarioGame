@@ -1,0 +1,41 @@
+Review author: Abdullah Alhag
+Date: 9/24/2018
+Sprint 2
+
+File: Mushroom.cs
+Authored by: Bohan Zhang
+Time taken for review: 25 minutes
+
+namespace FooBarHappyHour.Items
+{
+    public abstract class Mushroom : IItem
+    {
+        protected enum MushroomColor { RED, GREEN }
+        protected Texture2D Texture { get; set; }
+        protected Vector2 Position { get; set; }
+        protected MushroomColor Color { get; set; }
+
+        public void Draw(SpriteBatch spriteBatch, Vector2 position)
+        {
+            spriteBatch.Draw(Texture, position, Microsoft.Xna.Framework.Color.White);
+            this.Position = position;
+        }
+
+        public void Update(GameTime gameTime)
+        {
+
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(Texture, Position, Microsoft.Xna.Framework.Color.White);
+        }
+        //possible future abstract method put here
+    }
+}
+
+Comments:
+I feel like this class is unneeded as each mushroom in the game does a different thing and the coupling between mushroom class and other 
+specific color mushroom classes only introduce high coupling and makes it difficult to maintain code in the future. Mushrooms are just like other items
+and eventually each will result in different action when hit by Mario. My recommendation is to implement 
+green/red mushrooms as separate items and delete mushroom class.

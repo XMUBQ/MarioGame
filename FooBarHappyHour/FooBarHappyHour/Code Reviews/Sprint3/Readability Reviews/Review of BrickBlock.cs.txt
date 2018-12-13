@@ -1,0 +1,63 @@
+﻿Review author: Keegan Strohm
+Date: 10/3/2018
+Sprint 3
+
+File: BrickBlock.cs
+Authored by: Abdullah, Joel
+Time taken for review: 10 minutes
+
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using FooBarHappyHour.Interfaces;
+using FooBarHappyHour.Factories;
+
+namespace FooBarHappyHour.Blocks
+{
+    public class BrickBlock : IBlock
+    {
+        public Vector2 Location { get; set; }
+        private ISprite blockSprite;
+
+        public BrickBlock(Vector2 location)
+        {
+            blockSprite = BlockSpriteFactory.Instance.CreateBrickBlockSprite();
+            Location = location;
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            // TODO: code for collision detection
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            blockSprite.Draw(spriteBatch, Location);
+        }
+
+        public Rectangle GetRectangle()
+        {
+            return new Rectangle((int)Location.X, (int)Location.Y, blockSprite.Width, blockSprite.Height);
+        }
+        public void CollisionWithMario(IMario mario, IBlock[,] Blocks, int blockIndexX, int blockIndexY)
+        {
+            switch (mario.PowerUpState)
+            {
+                case PowerUp.Super:
+                case PowerUp.Fire:
+                case PowerUp.SuperInvincible:
+                    Blocks[blockIndexX, blockIndexY] = null;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+}
+
+
+Comments:
+This class overall is very readable and I think that it would not be very hard for anyone to get up to speed on what this class does.
+The main review is going to be over the readability of the CollisionWithMario method because of the use of a switch statements. I think that
+this sort of switch statement could be broken down to possibly one if statement that would reduce the amount of lines that have to be read.
+If the use of this method was more complex and would result in multiple if statements then I think breaking it down into a switch would be better,
+but as it stands a single if could accomplish what this is doing.

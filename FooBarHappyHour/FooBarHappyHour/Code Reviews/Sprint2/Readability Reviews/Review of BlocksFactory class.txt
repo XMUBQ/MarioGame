@@ -1,0 +1,51 @@
+﻿Review author: Keegan
+Date: 9/19/2018
+Sprint 2
+
+File: BlockFactory.cs
+Authored by: Abdullah
+Time taken for review: 30 minutes
+
+public class BlockFactory
+    {
+        private Texture2D pipeSpritesheet;
+        private Texture2D brickBlockSpritesheet;
+        private Texture2D questionBlockSpritesheet;
+        private Texture2D hiddenBlockSpritesheet;
+        private Texture2D usedBlockSpritesheet;
+        public BlockFactory(ContentManager content)
+        {
+            this.initializeAllBlocks(content);
+        }
+        public void initializeAllBlocks(ContentManager content)
+        {
+            pipeSpritesheet = content.Load<Texture2D>("Block/Pipe");
+            brickBlockSpritesheet = content.Load<Texture2D>("Block/Brick");
+            questionBlockSpritesheet = content.Load<Texture2D>("Block/Question");
+            hiddenBlockSpritesheet = content.Load<Texture2D>("Block/Hidden");
+            usedBlockSpritesheet = content.Load<Texture2D>("Block/Used");
+        }
+        public IBlock CreateBlocks(string blockType)
+        {
+            switch (blockType) {
+                case "UsedBlock":
+                    return new UsedBlock(usedBlockSpritesheet);
+                case "HiddenBlock":
+                    return new HiddenBlock(hiddenBlockSpritesheet);
+                case "QuestionBlock":
+                    return new QuestionBlock(questionBlockSpritesheet);
+                case "BrickBlock":
+                    return new BrickBlock(brickBlockSpritesheet);
+                case "Pipe":
+                    return new BrickBlock(pipeSpritesheet);
+                default:
+                    return null;
+            }
+        }
+    }
+
+Comments:
+The code creates some issues downstream that will eventually need to be addressed. By using strings to find the correct sprites
+for instantiation it creates an issue where there are magic strings all over the place in the code. This piece of code is also not
+consistent with what the group decided to design factories as. Something like this can be fixed pretty easilly and will
+reduce the complexity of the code downstream that deals with this class.

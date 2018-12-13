@@ -1,0 +1,27 @@
+﻿Review author: Bohan Zhang
+Date: 10/8/2018
+Sprint 3
+
+File: HiddenBlock.cs
+Authored by: Abdullah, Bohan, Joel
+Time taken for review: 15 minutes
+
+ public void CollisionWithMario(IMario mario, CollisionSide side)
+        {
+            bool marioHasUpwardVelocity = mario.MarioState is MarioUpRightState || mario.MarioState is MarioUpLeftState;
+            if (becomeUsed)
+            {
+                MarioBlockCollisionHandler.NewLocation(this, mario, side);
+            }else if (side == CollisionSide.Bottom && marioHasUpwardVelocity)
+            {
+                stateMachine.BecomeUsed();
+                becomeUsed = true;
+                MarioBlockCollisionHandler.NewLocation(this, mario, side);
+            }
+        }
+
+Comments: 
+We have successfully separated the code for block collision handlers into different block classes, however, it still seems that 
+we expose the mario state information to the user in some state of blocks. Potential changes may be writing getter codes for 
+each state but that may result in code redundancy. As we move on to future sprint, we can decided this by seeing how many times
+we need to get the state of mario. If too many states infomation is required, we may add getter method for states.

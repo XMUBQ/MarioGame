@@ -1,0 +1,120 @@
+Review author: Joel Wong
+Date: 10/18/2018
+Sprint 4
+
+File: BrickBlock.cs
+Authored by: Abdullah
+Time taken for review: 10 minutes
+
+namespace FooBarHappyHour.Blocks
+{
+    public class BrickBlock : IBlock
+    {
+        public PhysicsInfo Physics { get; set; }
+        public PhysicsInfo leftBottomBrokenBlockInfo { get; set; }
+        public PhysicsInfo rigthTopBrokenBlockInfo { get; set; }
+        public PhysicsInfo rigthBottomBrokenBlockInfo { get; set; }
+        private bool Broken { get; set; }
+        private ISprite blockSprite;
+        private ISprite leftBottomBrokenBlockSprite;
+        private ISprite rigthTopBrokenBlockSprite;
+        private ISprite rigthBottomBrokenBlockSprite;
+        private Vector2 originLocation;
+        public int items
+		{ get; set; }
+
+        public BrickBlock(Vector2 location)
+        {
+            blockSprite = BlockSpriteFactory.Instance.CreateBrickBlockSprite();
+            Physics = new PhysicsInfo(location, new Vector2(0, 0), new Vector2(0, 0));
+            leftBottomBrokenBlockInfo = new PhysicsInfo(new Vector2((location.X), (location.Y - 4)), new Vector2(0, 0), new Vector2(0, 0));
+            rigthTopBrokenBlockInfo = new PhysicsInfo(new Vector2((location.X + 4), (location.Y)), new Vector2(0, 0), new Vector2(0, 0));
+            rigthBottomBrokenBlockInfo = new PhysicsInfo(new Vector2((location.X + 4), (location.Y - 4)), new Vector2(0, 0), new Vector2(0, 0));
+            originLocation = location;
+            Broken = false;
+            itemsCounter = 0;
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            Physics.Velocity += Physics.Acceleration * dt;
+            Physics.Location += ((Physics.Velocity * dt) + (1/2 * Physics.Acceleration * dt * dt));
+
+            if (Physics.Location.Y > originLocation.Y && !Broken)
+            {
+                Physics.Velocity = Vector2.Zero;
+                Physics.Acceleration = Vector2.Zero;
+                Physics.Location = originLocation;
+            }
+
+            leftBottomBrokenBlockInfo.Velocity += leftBottomBrokenBlockInfo.Acceleration * dt;
+            leftBottomBrokenBlockInfo.Location += ((leftBottomBrokenBlockInfo.Velocity * dt)+(1/2 * leftBottomBrokenBlockInfo.Acceleration * dt * dt));
+
+            rigthTopBrokenBlockInfo.Velocity += rigthTopBrokenBlockInfo.Acceleration * dt;
+            rigthTopBrokenBlockInfo.Location += ((rigthTopBrokenBlockInfo.Velocity *dt) + (1/2 * rigthTopBrokenBlockInfo.Acceleration * dt * dt));
+
+            rigthBottomBrokenBlockInfo.Velocity += rigthBottomBrokenBlockInfo.Acceleration * dt;
+            rigthBottomBrokenBlockInfo.Location += ((rigthBottomBrokenBlockInfo.Velocity * dt) + (1/2 * rigthBottomBrokenBlockInfo.Acceleration * dt * dt));
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            blockSprite.Draw(spriteBatch, Physics.Location);
+            if(Broken)
+            {
+                leftBottomBrokenBlockSprite.Draw(spriteBatch, leftBottomBrokenBlockInfo.Location);
+                rigthTopBrokenBlockSprite.Draw(spriteBatch, rigthTopBrokenBlockInfo.Location);
+                rigthBottomBrokenBlockSprite.Draw(spriteBatch, rigthBottomBrokenBlockInfo.Location);
+            }
+        }
+
+        public Rectangle Rectangle => new Rectangle((int)Physics.Location.X, (int)Physics.Location.Y, blockSprite.Width, blockSprite.Height);
+
+
+        public void CollisionWithMario(IMario mario, CollisionSide side)
+        {
+            if (!Broken)
+            {
+                if (side == CollisionSide.Bottom)
+                {
+                    //Console.WriteLine(itemsCounter);
+                    if (itemsCounter == 0 && !mario.IsNormal)
+                    {
+                        Broken = true;
+                        blockSprite = BlockSpriteFactory.Instance.CreateBrokenBlockSprite();
+                        Physics.Velocity = new Vector2(-45, -100);
+                        Physics.Acceleration = new Vector2(0, 200f);
+
+                        leftBottomBrokenBlockSprite = BlockSpriteFactory.Instance.CreateBrokenBlockSprite();
+                        leftBottomBrokenBlockInfo.Velocity = new Vector2(-45, -45);
+                        leftBottomBrokenBlockInfo.Acceleration = new Vector2(0, 200);
+
+                        rigthTopBrokenBlockSprite = BlockSpriteFactory.Instance.CreateBrokenBlockSprite();
+                        rigthTopBrokenBlockInfo.Velocity = new Vector2(45, -100);
+                        rigthTopBrokenBlockInfo.Acceleration = new Vector2(0, 200);
+
+                        rigthBottomBrokenBlockSprite = BlockSpriteFactory.Instance.CreateBrokenBlockSprite();
+                        rigthBottomBrokenBlockInfo.Velocity = new Vector2(45, -45);
+                        rigthBottomBrokenBlockInfo.Acceleration = new Vector2(0, 200);
+                    }
+                    else
+                    {
+                        Physics.Velocity = new Vector2(0, -100);
+                        Physics.Acceleration = new Vector2(0, 500f);
+                        itemsCounter =- 1;
+                    }
+                }
+                MarioBlockCollisionHandler.NewLocation(this, mario, side);
+            }
+        }
+    }
+}
+
+Comments:
+There's definitely too much going on this class. For just some code that is meant to handle the broken block pieces, it made the class well over a hundred lines. The huge number of variables
+also makes for some troublesome maintaining and reduces readability of the class. Also, please do proofread for spelling mistakes since you are copy and pasting the same code throughout the class.
+Consider either creating a separate class or using the state machine to handle the breaking of the block, or making it so that all four block pieces are featured in one single sprite
+so that we can avoid the repeating code for sprites and updates.
+

@@ -1,0 +1,40 @@
+﻿Review author: Bohan Zhang
+Date: 10/29/2018
+Sprint 4
+
+File: ItemFactory.cs
+Authored by: Joel
+Time taken for review: 15 minutes
+
+namespace FooBarHappyHour.Factories
+{
+    public static class ItemFactory
+    {
+        public static void CreateItem(IItem itemType, Vector2 location)
+        {
+            if (itemType is PowerUp)
+            {
+                SuperMarioBros.Instance.World.Items.Add(new PowerUp(location, SuperMarioBros.Instance.World.Mario.IsSmall));
+            }
+            else if (itemType is SuperStar)
+            {
+                SuperMarioBros.Instance.World.Items.Add(new SuperStar(location));
+            }
+            else if (itemType is GreenMushroom)
+            {
+                SuperMarioBros.Instance.World.Items.Add(new GreenMushroom(location));
+            }
+            else if (itemType is Coin)
+            {
+                SuperMarioBros.Instance.World.Items.Add(new Coin(location));
+            }
+
+            
+			("Spawned a " + itemType.ToString());
+        }
+    }
+}
+
+Currently each item would be instantiated twice in our world. If We hold reference of items, we can directly add 
+it to the list within our world. Maybe only one additional if-else check is needed that checks whether the item is 
+powerup and reinstantiate the item based on the mario state.

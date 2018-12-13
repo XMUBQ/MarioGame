@@ -1,0 +1,168 @@
+﻿Review author: Keegan Strohm
+Date: 9/24/2018
+Sprint 2
+
+File: SuperMarioBros.cs
+Authored by: Everyone
+Time taken for review: 20 minutes
+
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
+using FooBarHappyHour.Controllers;
+using FooBarHappyHour.Interfaces;
+using FooBarHappyHour.Blocks;
+using FooBarHappyHour.Player;
+using FooBarHappyHour.Factories;
+using FooBarHappyHour.Enemies;
+
+namespace FooBarHappyHour
+{
+    /// <summary>
+    /// This is the main type for your game.
+    /// </summary>
+    public class SuperMarioBros : Game
+    {
+        GraphicsDeviceManager graphics;
+        SpriteBatch spriteBatch;
+        public List<IController> controllerList;
+        public List<IGameObject> gameObjectList;
+
+        public Mario Mario { get; set; }
+        public Vector2 MarioSpriteLocation { get; set; }
+
+        public SuperMarioBros()
+        {
+            graphics = new GraphicsDeviceManager(this);
+            Content.RootDirectory = "Content";
+        }
+        
+        /// <summary>
+        /// Allows the game to perform any initialization it needs to before starting to run.
+        /// This is where it can query for any required services and load any non-graphic
+        /// related content.  Calling base.Initialize will enumerate through any components
+        /// and initialize them as well.
+        /// </summary>
+        protected override void Initialize()
+        {
+            MarioSpriteFactory.Instance.LoadAllTextures(Content);
+            EnemySpriteFactory.Instance.LoadAllTextures(Content);
+            ItemFactory.Instance.LoadAllTextures(Content);
+            BlockSpriteFactory.Instance.LoadAllTextures(Content);
+
+            gameObjectList = new List<IGameObject>();
+            InstantiateBlocks();
+            InstantiateEnemies();
+            InstantiateItems();
+
+            Mario = new Mario();
+            MarioSpriteLocation = new Vector2(350, 240);
+            
+            controllerList = new List<IController>();
+            controllerList.Add(new KeyboardController(this));
+
+            graphics.PreferredBackBufferWidth = 640;  // set this value to the desired width window
+            graphics.PreferredBackBufferHeight = 480;   // set this value to the desired height window
+            graphics.ApplyChanges();
+
+            base.Initialize();
+        }
+
+        /// <summary>
+        /// LoadContent will be called once per game and is the place to load
+        /// all of your content.
+        /// </summary>
+        protected override void LoadContent()
+        {
+            // Create a new SpriteBatch, which can be used to draw textures.
+            spriteBatch = new SpriteBatch(GraphicsDevice);
+        }
+
+        /// <summary>
+        /// UnloadContent will be called once per game and is the place to unload
+        /// game-specific content.
+        /// </summary>
+        protected override void UnloadContent()
+        {
+            // TODO: Unload any non ContentManager content here
+        }
+
+        /// <summary>
+        /// Allows the game to run logic such as updating the world,
+        /// checking for collisions, gathering input, and playing audio.
+        /// </summary>
+        /// <param name="gameTime">Provides a snapshot of timing values.</param>
+        protected override void Update(GameTime gameTime)
+        {
+            foreach (IController controller in controllerList)
+            {
+                controller.Update();
+            }
+
+            foreach(IGameObject gameObject in gameObjectList)
+            {
+                gameObject.Update(gameTime);
+            }
+
+            Mario.Update(gameTime);
+
+            base.Update(gameTime);
+        }
+
+        /// <summary>
+        /// This is called when the game should draw itself.
+        /// </summary>
+        /// <param name="gameTime">Provides a snapshot of timing values.</param>
+        protected override void Draw(GameTime gameTime)
+        {
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+
+            spriteBatch.Begin();
+            Mario.Draw(spriteBatch, MarioSpriteLocation);
+
+            foreach(IGameObject gameObject in gameObjectList)
+            {
+                gameObject.Draw(spriteBatch);
+            }
+            spriteBatch.End();
+
+            base.Draw(gameTime);
+        }
+
+
+        public void InstantiateItems()
+        {
+            gameObjectList.Add(ItemFactory.Instance.CreateCoinItem(new Vector2(100, 100)));
+            gameObjectList.Add(ItemFactory.Instance.CreateStarItem(new Vector2(150, 100)));
+            gameObjectList.Add(ItemFactory.Instance.CreateGreenMushroomItem(new Vector2(200, 100)));
+            gameObjectList.Add(ItemFactory.Instance.CreateRedMushroomItem(new Vector2(250, 100)));
+            gameObjectList.Add(ItemFactory.Instance.CreateFireFlowerItem(new Vector2(300, 100)));
+        }
+
+        public void InstantiateBlocks()
+        {
+            gameObjectList.Add(new BeveledBlock(new Vector2(100, 200)));
+            gameObjectList.Add(new HiddenBlock(new Vector2(150, 200)));
+            gameObjectList.Add(new QuestionBlock(new Vector2(200, 200)));
+            gameObjectList.Add(new UsedBlock(new Vector2(250, 200)));
+            gameObjectList.Add(new BrickBlock(new Vector2(300, 200)));
+            gameObjectList.Add(new GroundBlock(new Vector2(350, 200)));
+            gameObjectList.Add(new Pipe(new Vector2(400, 200)));
+        }
+
+        public void InstantiateEnemies()
+        {
+            gameObjectList.Add(new Goomba(new Vector2(350, 150)));
+            gameObjectList.Add(new Koopa(new Vector2(400, 150)));
+        }
+    }
+}
+
+
+Comments:
+As of right now, there is a lot of hard coded values floating around in the SuperMarioBros class which is fine for sprint 2.
+When the specifications for the project change from simply displaying a few sprites on the screen to something that is more
+data driven, this entire class will have to be rewritten to accomodate that. The amount of time converting the current state
+of the SuperMarioBros class to something data driven would probably be trivial. Most of the effort would be completed
+in another class that SuperMarioBros would declare and instantiate. From a maintainability perspective this class doesn't have
+a whole lot going on and should be easy for the team to maintain and update for future project specifications.

@@ -1,0 +1,47 @@
+Review author: Joel Wong
+Date: 9/17/2018
+Sprint 2
+
+File: SuperMarioBros.cs
+Authored by: Abdullah, Bohan, Joel, Keegan
+Time taken for review: 25 minutes
+
+Comments:
+I feel like right now there is a bit of a lack of cohesion going on in the main game class, we have many different ways of initializing
+game objects within the main game class, and within those different initializing we have different naming conventions going on.
+
+1) Sprite Factories
+Abdullah, Bohan - instead of creating new instances of BlockFactory and itemFactory, I suggest that you guys implement a LoadAllTextures
+method within your sprite factories if you haven't, and call that instance once like Keegan and I did. The whole point of implementing a
+sprite factory is so that your game object class will call on it and automatically load the appropriate sprite whenever a new instance of
+the game object gets instantiated, so that we don't have to keep passing the factory to the game object whenever a new one gets created.
+(Refer -> MarioSpriteFactory.Instance.LoadAllTextures(Content);)
+This is also so our code looks a bit more uniform instead of having multiple ways of doing the same thing, and then we can try to find a
+way to move those calls to LoadTextures() where it rightfully belongs instead of Initialize().
+
+2) Initializing game objects
+I also feel like currently our initializing of game objects is happening at various places all over the class, even though this should 
+only be for sprint 2. I suggest we make a separate list that holds all our game objects so that we only have to call the method to add
+the enemies, items and blocks altogether at once, and this will help us avoid having to call a separate foreach loop for each game obejct 
+within Update() and Draw() as well.
+
+3) Naming conventions:
+int x = 100, y = 200;
+foreach (Block b in blockList)
+{
+    b.Draw(spriteBatch,new Vector2(x,y));
+    x += 50;
+}
+
+Abdullah, I think it is better to give your variables more meaningful names which can describe what the variable does instead of an 
+arbitrary letter, so that in case someone else (who isn't us) tries to read our code, they can immediately figure out what the variable 
+is for, even they are just temporary variables used for looping. A better name would probably be:
+int xPosition = 100, yPosition = 200;
+foreach (Block block in blockList)
+{
+    block.Draw(spriteBatch,new Vector2(xPosition,yPosition));
+    xPosition += 50;
+}
+so that you can get the idea that those variables are acting as positional coordinates.
+Also, it might be a good idea to avoid declaring new variables within Draw() itself because essentially this means that the program is 
+going to declare new x and y variables, as well as perform the x += 50 computation, 30 times per second in order to draw your objects.

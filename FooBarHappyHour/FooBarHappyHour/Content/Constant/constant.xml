@@ -1,0 +1,117 @@
+<?xml version="1.0"?>
+<Utils xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<float>
+  <FloatZero>0</FloatZero>
+  <ItemFrameRate>0.05</ItemFrameRate>
+  <FlagFrameRate>0.1</FlagFrameRate>
+  <PersistentTime>0.1</PersistentTime>
+  <TransitionFrameTime>0.1</TransitionFrameTime>
+  <ExplosionTime>0.15</ExplosionTime>
+  <FrameTime>0.2</FrameTime>
+  <MenuCoolDownTime>0.25</MenuCoolDownTime>
+  <BlockBumpDelay>0.3</BlockBumpDelay>
+  <Half>0.5</Half>
+  <PlayerCoolDownTime>0.5</PlayerCoolDownTime>
+  <DumpingForce>0.8</DumpingForce>
+  <playerFlagRelativeLocationHigh>0.77</playerFlagRelativeLocationHigh>
+  <playerFlagRelativeLocationMid>0.55</playerFlagRelativeLocationMid>
+  <playerFlagRelativeLocationLow>0.49</playerFlagRelativeLocationLow>
+  <playerFlagRelativeLocation>0.41</playerFlagRelativeLocation>
+  <ElapsedTimeLimit>1</ElapsedTimeLimit>
+  <EnemyTimeToDisappear>1</EnemyTimeToDisappear>
+  <PlayerJumpTime>1</PlayerJumpTime>
+  <PlayerTransitionTime>1</PlayerTransitionTime>
+  <IdleDuration>1.5</IdleDuration>
+  <PauseTime>2</PauseTime>
+  <EnemyTimeToRevive>3</EnemyTimeToRevive>
+  <IntroTime>5</IntroTime>
+  <InvincibleTime>10</InvincibleTime>
+  <EnemyFlipHeight>20</EnemyFlipHeight>
+  <EnemyWalkSpeed>25</EnemyWalkSpeed>
+  <ItemComingOutOfBlockVelocity>25</ItemComingOutOfBlockVelocity>
+  <PositionOffset>30</PositionOffset>
+  <ItemMovingVelocity>45</ItemMovingVelocity>
+  <BlockBumpedDistance>75</BlockBumpedDistance>
+  <PlayerMaxWalkSpeed>100</PlayerMaxWalkSpeed>
+  <BlockExplodedDistance>128</BlockExplodedDistance>
+  <PlayerFlyVelocity>128</PlayerFlyVelocity>
+  <KoopaKickedSpeed>150</KoopaKickedSpeed>
+  <FireballBounceHeight>150</FireballBounceHeight>
+  <PlayerMaxRunSpeed>200</PlayerMaxRunSpeed>
+  <StarJumpVelocity>200</StarJumpVelocity>
+  <PlayerWalkAcceleration>200</PlayerWalkAcceleration>
+  <RemovalPosition>240</RemovalPosition>
+  <FireballMoveSpeed>250</FireballMoveSpeed>
+  <PlayerJumpVelocity>250</PlayerJumpVelocity>
+  <CoinMovingUpSpeed>250</CoinMovingUpSpeed>
+  <PlayerDeathBounceVelocity>300</PlayerDeathBounceVelocity>
+  <PlayerBounceVelocity>320</PlayerBounceVelocity>
+  <TerminalVelocity>400</TerminalVelocity>
+  <PlayerClimbDownFlagVelocity>200</PlayerClimbDownFlagVelocity>
+  <PlayerrRunAcceleration>400</PlayerrRunAcceleration>
+  <GravityConstant>500</GravityConstant>
+</float>
+<int>
+  <Zero>0</Zero>
+  <One>1</One>
+  <Two>2</Two>
+  <Three>3</Three>
+  <Four>4</Four>
+  <Six>6</Six>
+  <Seven>7</Seven>
+  <Eight>8</Eight>
+  <Nine>9</Nine>
+  <Ten>10</Ten>
+  <FlagPoleFrames>5</FlagPoleFrames>
+  <MenuLabelGap0>12</MenuLabelGap0>
+  <CommonObjectSize>16</CommonObjectSize>
+  <IntroHUDLabelGap>32</IntroHUDLabelGap>
+  <MenuLabelGap1>36</MenuLabelGap1>
+  <MenuLabelGap2>60</MenuLabelGap2>
+  <EnemyDamageScore>100</EnemyDamageScore>
+  <PowerUpItemsScore>1000</PowerUpItemsScore>
+  <FullFlagpoleScore>5000</FullFlagpoleScore>
+  <HighFlagpoleScore>2000</HighFlagpoleScore>
+  <MidFlagpoleScore>800</MidFlagpoleScore>
+  <LowFlagpoleScore>400</LowFlagpoleScore>
+  <DefaultFlagpoleScore>100</DefaultFlagpoleScore>
+  <WinScoreIncrement>50</WinScoreIncrement>
+  <CoinScore>200</CoinScore>
+  <BrokenBlockScore>50</BrokenBlockScore>
+  <MarioStarHeight>208</MarioStarHeight>
+  <CastleDoorRelaiveLocationX>32</CastleDoorRelaiveLocationX>
+  <CastleDoorRelaiveLocationY>48</CastleDoorRelaiveLocationY>
+  <ViewHeight>256</ViewHeight>
+  <InitialTimeLeft>400</InitialTimeLeft>
+</int>
+<string>
+  <BigPipe>BigPipe</BigPipe>
+  <SmallPipe>SmallPipe</SmallPipe>
+  <MediumPipe>MediumPipe</MediumPipe>
+  <InvalidSide>Invalid collision side provided</InvalidSide>
+  <GameOver>GAME OVER</GameOver>
+  <World>WORLD </World>
+  <Dash>-</Dash>
+  <LivesX> x </LivesX>
+  <OnePlayer>1 PLAYER GAME</OnePlayer>
+  <TwoPlayer>2 PLAYER GAME - NOT IMPLEMENTED</TwoPlayer>
+  <Exit>EXIT</Exit>
+  <Mario>MARIO</Mario>
+  <Time>TIME</Time>
+  <InitialScoresString>000000</InitialScoresString>
+  <InitialCoinsString>x00</InitialCoinsString>
+  <PlayerMario>Mario</PlayerMario>
+  <PlayerDown>Down</PlayerDown>
+  <PlayerBig>Big</PlayerBig>
+  <PlayerSmall>Small</PlayerSmall>
+  <PlayerAlive>Alive</PlayerAlive>
+  <PlayerDead>Dead</PlayerDead>
+  <PlayerIdle>Idle</PlayerIdle>
+  <PlayerUp>Up</PlayerUp>
+  <PlayerRun>Run</PlayerRun>
+  <PlayerFire>Fire</PlayerFire>
+  <PlayerNormal>Normal</PlayerNormal>
+  <PlayerSuper>Super</PlayerSuper>
+  <PlayerInvincible>Invincible</PlayerInvincible>
+</string>
+</Utils>

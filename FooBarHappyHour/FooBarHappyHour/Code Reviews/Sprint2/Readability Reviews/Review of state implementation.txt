@@ -1,0 +1,50 @@
+﻿Author: Bohan Zhang
+Date:09/19/2018
+Sprint2
+
+File: MarioBigRunLEFTState.cs, KeyboardController.cs
+Author: Joel, Keegan, Abdullah, Bohan
+
+For MarioBigRunLEFTState.cs
+Time taken for reviews: 20 minutes
+
+Comments: Actually I spent lots time understanding these parts of the code. This is partially because at first I am not that
+familiar with state design pattern but the naming convention here still leads to my confusion.
+
+private IMario mario;
+private ISprite sprite;
+public MarioBigRunLeftState(IMario mario)
+{
+      this.mario = mario;
+      sprite = MarioSpriteFactory.Instance.CreateMarioBigRunLeftSprite();
+}
+For example, intuitively, it's hard to understand what's the difference between IMario and ISprite. And also there is also a type
+called "Mario". I also realize that my naming of types has the same problem. I think we need to discuss the naming convention 
+together sometime. 
+And also as we already discussed, you can simplify this code by defining an enum type including mario's several states.
+like:
+
+public enum action{IDLE,LEFT,RIGHT,RUN}
+
+For KeyboardController.cs:
+Time taken for reviews: 20 minutes
+
+Comments: This is the violation of the original idea of using keyboardcontroller. Though it's the tradeoff between the command class 
+explosion and the elimination of if-else statement, to keep consistent, we should create more command class and revise the methods contract
+in IBlockState interface
+
+foreach(Block b in blockList)
+            {
+                if (b.currentState is QuestionBlockState)
+                {
+                    keyCommandMap.Add(Keys.Z, new BlockCommand(b));
+                }
+                else if (b.currentState is HiddenBlockState)
+                {
+                    keyCommandMap.Add(Keys.C, new BlockCommand(b));
+                }
+                else if (b.currentState is BrickBlockState)
+                {
+                    keyCommandMap.Add(Keys.X, new BlockCommand(b));
+                }
+            }

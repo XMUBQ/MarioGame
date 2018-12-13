@@ -1,0 +1,155 @@
+Review author: Abdullah Alhag
+Date: 10/22/2018
+Sprint 4
+
+File: MarioItemCollisionHandler.cs
+Authored by: Bohan Zhang
+Time taken for review: 10 minutes
+
+namespace FooBarHappyHour.Collision
+{
+    public static class MarioItemCollisionHandler
+    {
+        public static void HandleCollision(IMario mario, IItem item, CollisionSide side)
+        {
+            if (item is Coin)
+            {
+                HandleCoinCollision(mario, item as Coin, side);
+            }
+            else if (item is RedMushroom)
+            {
+                HandleRedMushroomCollision(mario, item as RedMushroom, side);
+            }
+            else if (item is GreenMushroom)
+            {
+                HandleGreenMushroomCollision(mario, item as GreenMushroom, side);
+            }
+            else if (item is FireFlower)
+            {
+                HandleFireLowerCollision(mario, item as FireFlower, side);
+            }
+            else if (item is SuperStar)
+            {
+                HandleSuperStarCollision(mario, item as SuperStar, side);
+            }
+        }
+
+        private static void HandleCoinCollision(IMario mario, Coin coin, CollisionSide side)
+        {
+            if (side == CollisionSide.Bottom && !coin.Physics.IsMovingDown())
+            {
+                coin.Physics.CoinMovingUp();
+                coin.Disappeared = false;
+                coin.CanCollided = true;
+            }
+            else if (!coin.Physics.IsVelocityZero())
+            {
+                // TODO: Added to player score.
+                coin.RemoveFlag = true;
+            }
+        }
+
+        private static void HandleRedMushroomCollision(IMario mario, RedMushroom rm, CollisionSide side)
+        {
+            if (!mario.IsBig)
+            {
+                if (side == CollisionSide.Bottom)
+                {
+                    rm.delay = 0;
+                    rm.Physics.ComingOutOfBlock();
+                    rm.Disappeared = false;
+                }
+                else if (rm.CanCollided || rm.Physics.IsComingOutOfBlock)
+                {
+                    mario.UseRedMushroom();
+                    rm.RemoveFlag = true;
+                }
+            }
+            else if (side==CollisionSide.Bottom)
+            {
+                rm.RemoveFlag = true;
+            }
+        }
+
+        private static void HandleGreenMushroomCollision(IMario mario, GreenMushroom gm, CollisionSide side)
+        {
+            if (side == CollisionSide.Bottom)
+            {
+                gm.delay = 0;
+                gm.Physics.ComingOutOfBlock();
+                gm.Disappeared = false;
+            }
+            else if (gm.CanCollided || gm.Physics.IsComingOutOfBlock)
+            {
+                mario.UseGreenMushroom();
+                gm.RemoveFlag = true;
+            }
+        }
+
+        private static void HandleSuperStarCollision(IMario mario, SuperStar ss, CollisionSide side)
+        {
+            if (ss.CanCollided || ss.Physics.IsComingOutOfBlock)
+            {
+                mario.UseSuperStar();
+                ss.Disappeared = true;
+                ss.RemoveFlag = true;
+            }
+            else if (side == CollisionSide.Bottom)
+            {
+                ss.Disappeared = false;
+                ss.delay = 0;
+                ss.Physics.ComingOutOfBlock();
+            }
+        }
+
+        private static void HandleFireLowerCollision(IMario mario, FireFlower ff, CollisionSide side)
+        {
+            if (mario.IsBig)
+            {
+                if (ff.CanCollided || ff.Physics.IsComingOutOfBlock)
+                {
+                    mario.UseFireFlower();
+                    ff.RemoveFlag = true;
+                }
+                else if (side == CollisionSide.Bottom)
+                {
+                    ff.delay = 0;
+                    ff.Physics.ComingOutOfBlock();
+                    ff.Disappeared = false;
+                }
+            }
+            else if (side==CollisionSide.Bottom)
+            {
+                ff.RemoveFlag = true;
+            }
+        }
+    }
+}
+
+
+Comments:
+There's a lot going on in this class. Too many nested if statements. You might need to consider reducing the level of nested 
+if statements by creating more classes which will definitely enhance the readability. Especially for RedMushroom handler and 
+FireFlower. You might wanna create a class to handle these based on if Mario is big or not.
+
+---------------------------
+
+Add-on discussion (Joel):
+
+I think what you can do is simplify the red mushroom and fire flower classes to be a single class called "PowerUp". Since they
+both essentially behave the same way in terms of how they affect gameplay, we can just have the block determine which PowerUp item
+should be spawned based on Mario's current state. These are the following cases that occur in the original game:
+
+Spawning of powerups:
+Mario is small -> Spawns Red Mushroom
+Mario is big -> Spawns Fire Flower
+
+Collecting of powerups:
+Mario is small -> Collects Red Mushroom -> Become big
+Mario is small -> Collects Fire Flower -> Become big
+Mario is big -> Collects Red Mushroom -> Become fiery
+Mario is big -> Collects Red Mushroom -> Become fiery
+
+As we can see it doesn't matter if the actual item is a Red Mushroom or a Fire Flower, it acts the same when collected by Mario.
+This is also why in the sample testing area image provided for Sprint 4 also calls the blocks as "PowerUp Block"s instead of 
+"Red Mushroom Block" and "Fire Flower Block". Hence we can just simplify both items to be a single "PowerUp" item.

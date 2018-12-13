@@ -1,0 +1,397 @@
+﻿Review author: Bohan Zhang
+Date: 11/7/2018
+Sprint 5
+
+File: GameStateManager.cs
+Authored by: Abdullah
+Time taken for review: 15 minutes
+
+using FooBarHappyHour.Audio;
+using FooBarHappyHour.Collision;
+using FooBarHappyHour.Factories;
+using FooBarHappyHour.Interfaces;
+using FooBarHappyHour.Players;
+using FooBarHappyHour.Utility;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+
+namespace FooBarHappyHour.MetaStates
+{
+    public class GameStateManager
+    {
+        public IMetaState State { get; set; }
+        public bool InPrimaryWorld { get; private set; }
+        public IWorld PrimaryWorld { get; private set; }
+        public IWorld HiddenWorld { get; private set; }
+        public IPlayer Player { get; set; }
+        public int Lives { get; set; }
+        public int Score { get; set; }
+        public int Coins { get; set; }
+        public double Time { get; set; }
+        public bool Win { get; set; }
+        public bool Paused { get; set; }
+        public CollisionDetection PrimaryWorldCollisionDetection { get; private set; }
+        public CollisionDetection HiddenWorldCollisionDetection { get; private set; }
+        private int worldID;
+        private double remainingPauseTime;
+        private bool canPause;
+        private double remainingResetTime;
+        private bool canReset;
+        private bool inTransition;
+        private bool outTransition;
+        private double timerRate;
+        private bool DecrementTimer { get; set; }
+        private bool IncrementScore { get; set; }
+        private float ElapsedTime { get; set; }
+
+
+        public GameStateManager()
+        {
+            State = new MenuState(this);
+            Lives = 3;
+            Score = 0;
+            Coins = 0;
+            Win = false;
+            Time = Utils.Instance.InitialTimeLeft;
+            worldID = 1;
+            remainingPauseTime = Utils.Instance.PauseTime;
+            canPause = true;
+            Paused = false;
+            remainingResetTime = Utils.Instance.PauseTime;
+            canReset = true;
+            inTransition = false;
+            outTransition = false;
+            timerRate = 1;
+            ElapsedTime = 0f;
+        }
+
+        public void Idle()
+        {
+            if (!Paused && State is WorldState)
+            {
+                Player.Idle();
+            }
+        }
+
+        public void Up()
+        {
+            if (!Paused)
+            {
+                State.Up();
+            }
+        }
+
+        public void Down()
+        {
+            if (!Paused)
+            {
+                State.Down();
+            }
+        }
+
+        public void Left()
+        {
+            if (!Paused)
+            {
+                State.Left();
+            }
+        }
+
+        public void Right()
+        {
+            if (!Paused)
+            {
+                State.Right();
+            }
+        }
+
+        public void Ability()
+        {
+            if (!Paused)
+            {
+                State.Ability();
+            }
+        }
+
+        public void Jump()
+        {
+            if (!Paused)
+            {
+                State.Jump();
+            }
+        }
+
+        public void Reset()
+        {
+            if (canReset && State is WorldState)
+            {
+                canReset = false;
+                Time = Utils.Instance.InitialTimeLeft;
+                Player = new Player("Mario");
+                PrimaryWorld = WorldFactory.Instance.CreatePrimaryWorld(worldID);
+                PrimaryWorldCollisionDetection = new CollisionDetection(PrimaryWorld);
+                HiddenWorld = WorldFactory.Instance.CreateHiddenWorld(worldID);
+                HiddenWorldCollisionDetection = new CollisionDetection(HiddenWorld);
+                if (InPrimaryWorld)
+                {
+                    Player.MovementState.Location = PrimaryWorld.PlayerSpawn;
+                }
+                else
+                {
+                    Player.MovementState.Location = HiddenWorld.PlayerSpawn;
+                }
+                AudioManager.Instance.PlayOverworldMusic();
+            }
+        }
+
+        public void Quit()
+        {
+            State.Quit();
+        }
+
+        public void ExitGame()
+        {
+            SuperMarioBros.Instance.Exit();
+        }
+
+        public void Pause()
+        {
+            if (State is WorldState && canPause)
+            {
+                canPause = false;
+                Paused = !Paused;
+                if (Paused)
+                {
+                    AudioManager.Instance.PauseMusic();
+                }
+                else
+                {
+                    AudioManager.Instance.ResumeMusic();
+                }
+                SoundFactory.Instance.PlayPauseGameSound();
+            }
+        }
+
+        public void SwitchWorld()
+        {
+            inTransition = true;
+            Player.MovementState.PlayTeleportDownAnimation();
+        }
+
+        public void CreatePrimaryWorld()
+        {
+            PrimaryWorld = WorldFactory.Instance.CreatePrimaryWorld(worldID);
+            PrimaryWorldCollisionDetection = new CollisionDetection(PrimaryWorld);
+        }
+
+        public void CreateHiddenWorld()
+        {
+            HiddenWorld = WorldFactory.Instance.CreateHiddenWorld(worldID);
+            HiddenWorldCollisionDetection = new CollisionDetection(HiddenWorld);
+        }
+
+        public void CreateNextWorld()
+        {
+            worldID += 1;
+            State = new IntroState(this);
+        }
+
+        public void RecreateWorld()
+        {
+            State = new IntroState(this);
+        }
+
+        public void PrimaryWorldReady()
+        {
+            Player.MovementState.Location = PrimaryWorld.PlayerSpawn;
+            InPrimaryWorld = true;
+        }
+
+        public void HiddenWorldReady()
+        {
+            Player.MovementState.Location = HiddenWorld.PlayerSpawn;
+            InPrimaryWorld = false;
+        }
+
+        public void PrimaryWorldTeleport()
+        {
+            outTransition = true;
+            Player.MovementState.Location = PrimaryWorld.InTeleporter.Physics.Location;
+            InPrimaryWorld = true;
+            Player.MovementState.PlayTeleportUpAnimation();
+        }
+
+        public void HiddenWorldTeleport()
+        {
+            Player.MovementState.Location = HiddenWorld.InTeleporter.Physics.Location;
+            InPrimaryWorld = false;
+        }
+
+        public void HardResetWorlds()
+        {
+            Lives = 3;
+            Score = 0;
+            Coins = 0;
+            Time = Utils.Instance.InitialTimeLeft;
+            worldID = 1;
+            PrimaryWorld = null;
+            PrimaryWorldCollisionDetection = null;
+            HiddenWorld = null;
+            HiddenWorldCollisionDetection = null;
+            Player = null;
+        }
+
+        public void SoftResetWorlds()
+        {
+            if (State is WorldState && Lives > 0)
+            {
+                Time = Utils.Instance.InitialTimeLeft;
+                Player = new Player("Mario");
+                if (InPrimaryWorld)
+                {
+                    PrimaryWorld.WorldFrozen = false;
+                    Player.MovementState.Location = PrimaryWorld.PlayerSpawn;
+                }
+                else
+                {
+                    HiddenWorld.WorldFrozen = false;
+                    Player.MovementState.Location = HiddenWorld.PlayerSpawn;
+                }
+                State = new IntroState(this);
+            }
+            else
+            {
+                State = new GameOverState(this);
+            }
+        }
+
+        public void PlayerDeath()
+        {
+            Lives--;
+            SoftResetWorlds();
+        }
+
+        public void Won()
+        {
+            Player.DrawPlayer = false;
+            Player.Frozen= true;
+            timerRate = 0.05;
+            if (IncrementScore) Score += 50;
+        }
+
+        private void UpdateTimer(GameTime gameTime)
+        {
+            IncrementScore = false;
+            DecrementTimer = false;
+            ElapsedTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            if (ElapsedTime > timerRate)
+            {
+                IncrementScore = true;
+                DecrementTimer = true;
+                ElapsedTime = 0;
+            }
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            State.Update(gameTime);
+            remainingPauseTime -= gameTime.ElapsedGameTime.TotalSeconds;
+            if (remainingPauseTime < 0)
+            {
+                canPause = true;
+                remainingPauseTime = Utils.Instance.PauseTime;
+            }
+            remainingResetTime -= gameTime.ElapsedGameTime.TotalSeconds;
+            if (remainingResetTime < 0)
+            {
+                canReset = true;
+                remainingResetTime = Utils.Instance.PauseTime;
+            }
+            if (State is WorldState && !Paused)
+            {
+                if (Player.IsAlive)
+                {
+                    if (Player.MovementState.TeleportAnimationComplete)
+                    {
+                        Player.Collidable = true;
+                    }
+                }
+                else
+                {
+                    Player.Collidable = false;
+                }
+                if (inTransition && Player.MovementState.TeleportAnimationComplete)
+                {
+                    inTransition = false;
+                    State = new WorldTransitionState(this);
+                }
+                if (outTransition && Player.MovementState.TeleportAnimationComplete)
+                {
+                    outTransition = false;
+                }
+                UpdateTimer(gameTime);
+                if (DecrementTimer) Time -= 1;
+                if (Time == 0) State = new MenuState(this);
+
+                if(Win)
+                {
+                    Won();
+                    Player.Update(gameTime);  
+                }
+                else
+                {
+                    if (InPrimaryWorld)
+                    {
+                        PrimaryWorld.Update(gameTime);
+                        Player.Update(gameTime);
+                        PrimaryWorldCollisionDetection.CheckAllCollisions();
+                    }
+                    else
+                    {
+                        HiddenWorld.Update(gameTime);
+                        Player.Update(gameTime);
+                        HiddenWorldCollisionDetection.CheckAllCollisions();
+                    }
+                }
+            }
+        }
+
+        public void Draw(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice)
+        {
+            State.Draw(spriteBatch, graphicsDevice);
+            if (State is WorldState)
+            {
+                if (inTransition || outTransition)
+                {
+                    Player.Draw(spriteBatch);
+                    if (InPrimaryWorld)
+                    {
+                        PrimaryWorld.Draw(spriteBatch);
+                    }
+                    else
+                    {
+                        HiddenWorld.Draw(spriteBatch);
+                    }
+                }
+                else
+                {
+                    if (InPrimaryWorld)
+                    {
+                        PrimaryWorld.Draw(spriteBatch);
+                    }
+                    else
+                    {
+                        HiddenWorld.Draw(spriteBatch);
+                    }
+                    Player.Draw(spriteBatch);
+                }
+            }
+        }
+    }
+}
+
+           
+Comments: I'm not exactly a big fan of how the GameStateManager is trying to do the job of WorldState as in my opinion, the game state manager should only be handling
+what State the game is currently in, and not have to worry about the details of each state. Currently, it's performing the updates that should be in WorldState such as 
+handling scores, timer, mario warping between pipes and such, while also having to distinguish between mario being in the Overworld or the hidden world. That screams
+low cohesion and also results in much duplicate code.

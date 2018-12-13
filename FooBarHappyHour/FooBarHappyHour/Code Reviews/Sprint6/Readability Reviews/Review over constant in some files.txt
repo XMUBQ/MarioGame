@@ -1,0 +1,22 @@
+﻿Review author: Bohan Zhang
+Date: 12/4/2018
+Sprint 6
+
+File: WorldFactory.cs
+Authored by: Bohan, Keegan, Joel
+Time taken for review: 15 minutes
+
+private static Dictionary<string, Action> ObjectDictionary(IWorld world, string type, float xPosition, float yPosition) => new Dictionary<string, Action>
+        {
+            { "Player", ()=> CreatePlayer(world, type, xPosition, yPosition) },
+            { "Block", ()=> CreateBlock(world, type, xPosition, yPosition) },
+            { "Enemy", ()=> CreateEnemy(world, type, xPosition, yPosition) },
+            { "Item", ()=> CreateItem(world, type, xPosition, yPosition) },
+            { "Scenery", ()=> CreateScenery(world, type, xPosition, yPosition) },
+            { "Misc", ()=> CreateMisc(world, type, xPosition, yPosition) },
+            { "Teleporter", ()=> CreateTeleporter(world, type, xPosition, yPosition) }
+        };
+
+Comments: I know we don't have too much time... If we can just eliminates these constant strings to keep
+our work consistent over the entire solution. And there are still some constants not moved to utils class
+in some other files.

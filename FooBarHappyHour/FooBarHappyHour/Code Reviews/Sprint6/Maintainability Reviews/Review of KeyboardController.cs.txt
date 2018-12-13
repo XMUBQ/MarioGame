@@ -1,0 +1,75 @@
+﻿Review author: Keegan
+Date: 12/4/2018
+Sprint 6
+
+File: KeyboardController.cs
+Authored by: Everyone
+Time taken for review: 15 minutes
+
+using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
+using FooBarHappyHour.Commands;
+using FooBarHappyHour.Interfaces;
+using FooBarHappyHour.MetaStates;
+using Microsoft.Xna.Framework;
+
+namespace FooBarHappyHour.Controllers
+{
+    public class KeyboardController : IController
+    {
+        public bool PlayerReceivedUserInput { get; private set; }
+        private readonly Dictionary<Keys, ICommand> playerCommandMap;
+        private readonly Dictionary<Keys, ICommand> enemyCommandMap;
+        public KeyboardController(GameStateManager gameStateManager)
+        {
+            PlayerReceivedUserInput = false;            
+            playerCommandMap = new Dictionary<Keys, ICommand>
+            {
+                { Keys.P, new PauseCommand(gameStateManager) },
+                { Keys.Q, new QuitCommand(gameStateManager) },
+                { Keys.D1, new ResetCommand(gameStateManager)},
+                { Keys.X, new AbilityCommand(gameStateManager) },
+                { Keys.Space, new JumpCommand(gameStateManager) },
+                { Keys.A, new LeftCommand(gameStateManager) },
+                { Keys.D, new RightCommand(gameStateManager) },
+                { Keys.S, new DownCommand(gameStateManager) },
+                { Keys.W, new UpCommand(gameStateManager) }
+            };
+            enemyCommandMap = new Dictionary<Keys, ICommand>
+            {
+                { Keys.NumPad0, new JumpCommand(gameStateManager) },
+                { Keys.NumPad4, new LeftCommand(gameStateManager) },
+                { Keys.NumPad6, new RightCommand(gameStateManager) },
+                { Keys.NumPad2, new DownCommand(gameStateManager) },
+                { Keys.NumPad8, new UpCommand(gameStateManager) },
+                { Keys.NumPad7, new SwitchLeftCommand(gameStateManager) },
+                { Keys.NumPad9, new SwitchRightCommand(gameStateManager) },
+            };
+        }
+
+        public void Update(GameTime gameTime)
+        {                       
+            KeyboardState state = Keyboard.GetState();
+            PlayerReceivedUserInput = false;
+            foreach (KeyValuePair<Keys, ICommand> keyCommandPair in playerCommandMap)
+            {
+                if (state.IsKeyDown(keyCommandPair.Key))
+                {
+                    keyCommandPair.Value.Execute(PlayerSelection.Player);
+                    PlayerReceivedUserInput = true;
+                }
+            }
+            foreach (KeyValuePair<Keys, ICommand> keyCommandPair in enemyCommandMap)
+            {
+                if (state.IsKeyDown(keyCommandPair.Key))
+                {
+                    keyCommandPair.Value.Execute(PlayerSelection.Enemy);
+                }
+            }            
+        }
+    }
+}
+
+This class right now is pretty straight forward and I think that right now it isn't a problem. The problem is that in the future if this class were to
+be extended then I think that there would be maintainability issues. As of right now both players input is handled here and I think a more generic breakdown
+would be beneficial to do so that multiple players could be added easier.
